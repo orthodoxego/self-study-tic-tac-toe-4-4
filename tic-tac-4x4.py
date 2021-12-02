@@ -1,5 +1,6 @@
 import pygame
 from setup import Setup
+from model.tictacengine import TicTacEngine
 
 class Game:
     """Класс-шаблон для игр на базе pygame."""
@@ -28,6 +29,7 @@ class Game:
 
         # Игровой движок (модель)
         # Она же создаёт и представление, и контроллер, и игровые объекты
+        self.__tic_tac_toe = TicTacEngine()
 
     @property
     def WIDTH(self):
@@ -41,8 +43,10 @@ class Game:
         """Главный цикл игры."""
         while (self.playGame):
             self.scene.fill(Setup.BLACK)
-            # self.__hit_engine.draw(self.scene)
-            # self.playGame = self.__hit_engine.act(pygame, self.__delta / 1000)
+
+            self.playGame = self.__tic_tac_toe.act(pygame, self.__delta / 1000)
+            self.__tic_tac_toe.draw(self.scene, self.__delta)
+
             pygame.display.flip()
             self.__delta = self.clock.tick(Setup.FPS)
         pygame.quit()
