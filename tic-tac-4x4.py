@@ -1,6 +1,6 @@
 import pygame
 from setup import Setup
-from model.tictacengine import TicTacEngine
+from model.engine import TicTacEngine
 
 class Game:
     """Класс-шаблон для игр на базе pygame."""

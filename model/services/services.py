@@ -25,3 +25,38 @@ class Services:
         return_y = (mouse_y // setup.getSizeCell()) % setup.getSizeCell()
 
         return (return_x, return_y)
+
+    def getWinningCells(self, field, setup):
+        """Определяет, выграл ли игрок.
+        В случае выигрыша возвращает кортеж с координатами клеток-победителей и номером победителя."""
+        winCells = []
+        res = {"WIN": setup.clear_field, "CELLS": winCells}
+
+        # Маркера фигур для поиска в поле
+        figures = f"{setup.figure01}{setup.figure02}{setup.clear_field}"
+
+        # Маркера для фигур первого игрока и условного противника
+        player = figures[0] * 4
+        enemy = figures[1] * 4
+
+        # Поиск совпадений
+        for i in range(len(field)):
+            horizontal = ""
+            for j in range(len(field)):
+                horizontal += figures[field[j][i]]
+
+            win = None
+            if player in horizontal:
+                win = player
+            elif enemy in horizontal:
+                win = enemy
+
+            if win != None:
+                res["WIN"] = int(win[0])
+                for o in range(horizontal.find(win[0]), horizontal.find(win[0]) + 4):
+                    winCells.append([i, o])
+                res["CELLS"] = winCells
+                return res
+            # print(horizontal)
+
+        return res

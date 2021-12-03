@@ -16,10 +16,13 @@ class Setup(metaclass=Single):
         self._screen_width = 1024
         self._screen_height = 768
 
+        # Файл датасета
+        self.dataset_file_name = "dataset01.dat"
+
         # Номера фигур
         self.figure01 = 0
         self.figure02 = 1
-        self.clear_field = 10
+        self.clear_field = 2
 
         # Размер доски X * X
         self.board_lenght = 5

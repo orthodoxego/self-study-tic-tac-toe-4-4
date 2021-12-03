@@ -4,6 +4,7 @@ from controller.controller import ControllerGame
 from model.services.playermove import PlayerMove
 from model.services.gamestate import GameState
 from model.services.services import Services
+from model.study.selfstudy import SelfStudy
 from setup import Setup
 from model.datamodel import DataModel
 from view.textures import Textures
@@ -21,22 +22,34 @@ class TicTacEngine:
         self.__text = TextView()
         self.__controller = ControllerGame()
         self.__services = Services(self.setup.start_point_x, self.setup.start_point_y)
-        self.__gamestate = GameState.PLAYER
+        self.__game_state = GameState.PLAYER
+
+        # Класс-обучалка
+        self.study = SelfStudy(self.__datamodel.field, self.setup)
+
+        # Результат игры
+        self.__result_game = None
 
         # Объекты-обработчики действий игрока
         self.__playerMove = PlayerMove()
+        self.__botMove = PlayerMove()
 
     def contfoller(self, pygame, delta):
         result_controller = True
 
         result_controller *= self.__controller.act(pygame, delta)
 
-        if self.__gamestate == GameState.PLAYER:
+        if self.__game_state == GameState.PLAYER:
             # Нажата левая кнопка мыши
             if result_controller == self.__controller.PRESSED_LEFT_KEY_MOUSE:
-                self.playerMove()
-        elif self.__gamestate == GameState.BOT:
-            self.__gamestate = GameState.PLAYER
+                self.runMove(self.playerOneMove())
+
+        if self.__game_state == GameState.BOT:
+            if result_controller == self.__controller.PRESSED_LEFT_KEY_MOUSE:
+                self.runMove(self.playerTwoMove())
+
+        if not result_controller:
+            self.study.saveDataAll()
 
         return result_controller
 
@@ -56,15 +69,43 @@ class TicTacEngine:
         self.__view.draw_cells_and_figure(scene, self.__datamodel.field, draw_selected_cell_x, draw_selected_cell_y)
         self.__view.draw_texture(scene, 10, 10, self.__text.getSystemText("FPS", f"FPS: {int(clock.get_fps())}", self.setup.GREEN))
 
-    def playerMove(self):
+    def playerOneMove(self):
 
         xy_pressed_cells = self.__services.getCellsCoord(self.__controller.mouse_x, self.__controller.mouse_y,
                                                          self.setup)
-        x = xy_pressed_cells[0]
-        y = xy_pressed_cells[1]
-        print(xy_pressed_cells, f"Number: {y * self.setup.board_lenght + x}")
 
-        self.__gamestate = self.__playerMove.getMove(xy_pressed_cells, self.__datamodel.field,
+        new_state = self.__playerMove.getMove(xy_pressed_cells, self.__datamodel.field,
                                                      GameState.BOT,
                                                      GameState.PLAYER,
                                                      self.setup.figure01)
+
+        if new_state != self.__game_state:
+            self.study.addStep(xy_pressed_cells[0], xy_pressed_cells[1])
+
+        return new_state
+
+    def playerTwoMove(self):
+        xy_pressed_cells = self.__services.getCellsCoord(self.__controller.mouse_x, self.__controller.mouse_y,
+                                                         self.setup)
+        new_state = self.__playerMove.getMove(xy_pressed_cells, self.__datamodel.field,
+                                                     GameState.PLAYER,
+                                                     GameState.BOT,
+                                                     self.setup.figure02)
+        if new_state != self.__game_state:
+            self.study.addStep(xy_pressed_cells[0], xy_pressed_cells[1])
+
+        return new_state
+
+    def winGame(self):
+        res = self.__services.getWinningCells(self.__datamodel.field, self.setup)
+        print(res)
+        return res
+
+    def runMove(self, current_user_function):
+        new_state = current_user_function
+        if new_state != self.__game_state:
+            self.__result_game = self.winGame()
+            if self.__result_game["WIN"] == self.setup.clear_field:
+                self.__game_state = new_state
+            else:
+                self.__game_state = GameState.WINGAME

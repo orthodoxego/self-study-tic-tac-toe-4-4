@@ -27,6 +27,6 @@ class View:
                     texture_select = self.__texture.cell_district
                 self.draw_cells(i, j, scene, x_select, y_select, texture_select)
 
-                if data[i][j] < 5:
+                if data[i][j] != self.setup.clear_field:
                     scene.blit(self.__texture.figure[data[i][j]], (self.setup.start_point_x + i * self.setup.getSizeCell(),
                                                      self.setup.start_point_y + j * self.setup.getSizeCell()))
