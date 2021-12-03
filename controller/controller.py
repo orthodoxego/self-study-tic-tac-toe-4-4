@@ -1,57 +1,94 @@
-from setup import Setup
-
 class Controller:
 
     def __init__(self):
-        self.lkm_pressed = False
-        self.__pause = False
-
-    @property
-    def pause(self):
-        return self.__pause
-
-    @pause.setter
-    def pause(self, value):
-        self.__pause = value
-
-    def __invertPause(self):
-        self.lkm_pressed = False
-        self.__pause = not self.__pause
+        self.mouse_position_x = 0
+        self.mouse_position_y = 0
+        self.PRESSED_LEFT_KEY_MOUSE = 100
+        self.UNPRESSED_LEFT_KEY_MOUSE = 101
 
     def act(self, pygame, delta):
-        return self.__check_events(pygame, delta)
+        return self.check_events(pygame, delta)
 
-    def __check_events(self, pygame, delta):
+    def pressLKM(self):
+        """Пользователь нажал ЛКМ."""
+        return self.PRESSED_LEFT_KEY_MOUSE
+
+    def unpressLKM(self):
+        """Пользователь отпустил ЛКМ."""
+        return self.UNPRESSED_LEFT_KEY_MOUSE
+
+    def eventQUIT(self):
+        """Закрытие окна."""
+        return False
+
+    def pressESCAPE(self):
+        """Пользователь нажал Escape."""
+        return False
+
+    """Клавиши влево, вправо и так далее."""
+    def pressLEFT(self):
+        return True
+
+    def pressRIGHT(self):
+        return True
+
+    def pressUP(self):
+        return True
+
+    def pressDOWN(self):
+        return True
+
+    def pressP(self):
+        return True
+
+    @property
+    def mouse_x(self):
+        return self.mouse_position_x
+
+    @property
+    def mouse_y(self):
+        return self.mouse_position_y
+
+    def check_events(self, pygame, delta):
+        result = True
+
+        self.mouse_position_x = pygame.mouse.get_pos()[0]
+        self.mouse_position_y = pygame.mouse.get_pos()[1]
 
         for event in pygame.event.get():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and not self.pause:
-                    self.lkm_pressed = True
-                return True
+                if event.button == 1:
+                    return self.pressLKM()
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
-                    self.lkm_pressed = False
-                return True
+                    return self.unpressLKM()
 
             # Закрыли окно
             elif event.type == pygame.QUIT:
-                return False
+                result *= self.eventQUIT()
 
             # Клавиши
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    return False
+                    result *= self.pressESCAPE()
                 elif event.key == pygame.K_LEFT:
-                    pass
+                    result *= self.pressLEFT()
                 elif event.key == pygame.K_RIGHT:
-                    pass
+                    result *= self.pressRIGHT()
                 elif event.key == pygame.K_UP:
-                    pass
+                    result *= self.pressUP()
                 elif event.key == pygame.K_DOWN:
-                    pass
+                    result *= self.pressDOWN()
                 elif event.key == pygame.K_p or event.key == pygame.K_PAUSE:
-                    self.__invertPause()
+                    result *= self.pressP()
 
-        return True
+        return result
+
+class ControllerGame(Controller):
+
+    def __init__(self):
+        super().__init__()
+
+

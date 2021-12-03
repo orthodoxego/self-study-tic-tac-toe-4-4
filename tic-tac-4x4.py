@@ -9,6 +9,8 @@ class Game:
         """Конструктор, настройка основных параметров."""
         pygame.init()
 
+        self.setup = Setup()
+
         if width + height == 0:
             width = pygame.display.Info().current_w
             height = pygame.display.Info().current_h
@@ -18,10 +20,10 @@ class Game:
             self.scene = pygame.display.set_mode(self.__size)
             pygame.display.set_caption(caption)
 
-        Setup.screen_width = width
-        Setup.screen_height = height
+        self.setup.screen_width = width
+        self.setup.screen_height = height
 
-        self.__size = [Setup.screen_width, Setup.screen_height]
+        self.__size = [self.setup.screen_width, self.setup.screen_height]
         self.clock = pygame.time.Clock()
 
         self.playGame = True
@@ -33,26 +35,32 @@ class Game:
 
     @property
     def WIDTH(self):
-        return self.__WIDTH
+        return self.setup.screen_width
 
     @property
     def HEIGHT(self):
-        return self.__HEIGHT
+        return self.setup.screen_height
 
     def run(self):
         """Главный цикл игры."""
         while (self.playGame):
-            self.scene.fill(Setup.BLACK)
 
-            self.playGame = self.__tic_tac_toe.act(pygame, self.__delta / 1000)
-            self.__tic_tac_toe.draw(self.scene, self.__delta)
-
+            # Отрисовка
+            self.scene.fill(self.setup.BLACK)
+            self.__tic_tac_toe.draw(self.scene, self.clock)
             pygame.display.flip()
-            self.__delta = self.clock.tick(Setup.FPS)
+
+            # Клавиатура + расчёты
+            self.playGame = self.__tic_tac_toe.contfoller(pygame, self.__delta)
+            self.playGame *= self.__tic_tac_toe.act(pygame, self.__delta)
+
+            # Delta-time для коррекции анимации
+            self.__delta = self.clock.tick(self.setup.FPS) / 1000
+
         pygame.quit()
 
 
 if __name__ == "__main__":
-    game = Game(Setup.screen_width, Setup.screen_height, "TIC-TAC-TOE 4x4")
+    game = Game(Setup().screen_width, Setup().screen_height, "TIC-TAC-TOE 4x4")
     # game = Game(0, 0, "TIC-TAC-TOE 4x4")
     game.run()
