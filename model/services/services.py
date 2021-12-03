@@ -26,11 +26,18 @@ class Services:
 
         return (return_x, return_y)
 
+    def printData(self, field):
+        for i in range(len(field)):
+            for j in range(len(field[i])):
+                print(f"{j:1}:{i:1} {field[j][i]:2}  ", end="")
+            print()
+
     def getWinningCells(self, field, setup):
         """Определяет, выграл ли игрок.
         В случае выигрыша возвращает кортеж с координатами клеток-победителей и номером победителя."""
+
         winCells = []
-        res = {"WIN": setup.clear_field, "CELLS": winCells}
+        res = {"WIN": setup.clear_field * 20, "CELLS": winCells}
 
         # Маркера фигур для поиска в поле
         figures = f"{setup.figure01}{setup.figure02}{setup.clear_field}"
@@ -73,6 +80,54 @@ class Services:
                 res["CELLS"] = tuple(winCells)
                 return res
 
+        # Поиск диагональных совпадений. Берём точку отсчёта и
+        # от неё ищем "вправо-вверх" относительно поля
+        l = len(field)
+        for x in range(3, l):
+            for y in range(0, l - 4 + 1):
+                diag = self.getDiagonalRightUp(x, y, field)
+                if diag == player:
+                    diag = player
+                elif diag == enemy:
+                    diag = enemy
+
+                if diag == player or diag == enemy:
+                        res["WIN"] = diag[0]
+                        for o in range(4):
+                            res["CELLS"].append((x - o, y + o))
+                        res["CELLS"] = tuple(winCells)
+                        return res
+
+        for x in range(l - 1, 2, -1):
+            for y in range(l - 1, 2, -1):
+                diag = self.getDiagonalLeftUp(x, y, field)
+                if diag == player:
+                    diag = player
+                elif diag == enemy:
+                    diag = enemy
+
+                if diag == player or diag == enemy:
+                        res["WIN"] = diag[0]
+                        for o in range(4):
+                            res["CELLS"].append((x - o, y - o))
+                        res["CELLS"] = tuple(winCells)
+                        return res
+
 
         res["CELLS"] = tuple(res["CELLS"])
         return res
+
+    def getDiagonalRightUp(self, x, y, field):
+        ret = ""
+        for i in range(4):
+            ret += str(field[y + i][x - i])
+
+        return ret
+
+    def getDiagonalLeftUp(self, x, y, field):
+        ret = ""
+        for i in range(4):
+            ret += str(field[y - i][x - i])
+
+        return ret
+

@@ -1,11 +1,12 @@
 import pygame
 
 
-class TextView:
+class Font:
     """Генерирует поверхности с текстом для вывода на экран."""
     def __init__(self):
         """Определяет шрифты."""
-        self.__font_system = pygame.font.Font("font\\roboto-regular.ttf", 16)
+        self.__font_system = pygame.font.Font("font\\roboto-regular.ttf", 18)
+        self.__font_big = pygame.font.Font("font\\roboto-regular.ttf", 36)
         self.__texts = {}
         self.__surfaces = {}
 
@@ -16,4 +17,13 @@ class TextView:
                 return self.__surfaces[key]
         self.__texts[key] = text
         self.__surfaces[key] = self.__font_system.render(text, True, color)
+        return self.__surfaces[key]
+
+    def getBigText(self, key, text, color):
+        """Вернёт поверхность с текстом."""
+        if key in self.__texts:
+            if text == self.__texts[key]:
+                return self.__surfaces[key]
+        self.__texts[key] = text
+        self.__surfaces[key] = self.__font_big.render(text, True, color)
         return self.__surfaces[key]

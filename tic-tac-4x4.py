@@ -51,7 +51,7 @@ class Game:
             pygame.display.flip()
 
             # Клавиатура + расчёты
-            self.playGame = self.__tic_tac_toe.contfoller(pygame, self.__delta)
+            self.playGame = self.__tic_tac_toe.controller(pygame, self.__delta)
             self.playGame *= self.__tic_tac_toe.act(pygame, self.__delta)
 
             # Delta-time для коррекции анимации

@@ -4,3 +4,4 @@ class GameState(Enum):
     BOT = 0
     PLAYER = 1
     WINGAME = 2
+    DRAWGAME = 3
