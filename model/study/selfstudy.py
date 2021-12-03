@@ -11,7 +11,7 @@ class SelfStudy:
     def addStep(self, x, y):
         numberCells = y * self.setup.board_lenght + x
         self.__current_game += self.getChar(numberCells)
-        # print(self.__current_game)
+        print(self.__current_game)
 
     def getChar(self, n):
         digit = "ABCDEFGHIJKLMNOPQRSTUVWXY"
@@ -29,7 +29,8 @@ class SelfStudy:
         return result
 
     def saveDataAll(self):
-        self.dataset.insert(0, self.__current_game + "\n")
+        if self.__current_game != "":
+            self.dataset.insert(0, self.__current_game + "\n")
         try:
             f = open(self.file, "w", encoding="UTF-8")
             for i in range(len(self.dataset)):

@@ -42,8 +42,10 @@ class Services:
         # Поиск совпадений
         for i in range(len(field)):
             horizontal = ""
+            vertical = ""
             for j in range(len(field)):
                 horizontal += figures[field[j][i]]
+                vertical += figures[field[i][j]]
 
             win = None
             if player in horizontal:
@@ -54,9 +56,23 @@ class Services:
             if win != None:
                 res["WIN"] = int(win[0])
                 for o in range(horizontal.find(win[0]), horizontal.find(win[0]) + 4):
-                    winCells.append([i, o])
-                res["CELLS"] = winCells
+                    winCells.append((i, o))
+                res["CELLS"] = tuple(winCells)
                 return res
-            # print(horizontal)
 
+            win = None
+            if player in vertical:
+                win = player
+            elif enemy in vertical:
+                win = enemy
+
+            if win != None:
+                res["WIN"] = int(win[0])
+                for o in range(vertical.find(win[0]), vertical.find(win[0]) + 4):
+                    winCells.append((o, i))
+                res["CELLS"] = tuple(winCells)
+                return res
+
+
+        res["CELLS"] = tuple(res["CELLS"])
         return res

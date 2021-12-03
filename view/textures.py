@@ -17,6 +17,9 @@ class Textures:
         # Запрещённая для установки клетка
         self.cell_district = pygame.image.load('png/cell_district.png')
 
+        # Клетка-подсветка победившей комбинации
+        self.cell_win = pygame.image.load('png/cell_win.png')
+
         # Крестик и нолик
         self.figure = [pygame.image.load('png/cross.png'),
                        pygame.image.load('png/zero.png')]
