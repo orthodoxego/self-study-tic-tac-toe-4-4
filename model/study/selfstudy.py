@@ -93,10 +93,10 @@ class SelfStudy:
                     lose_move.append(data_set)
 
         worker_dataset = None
-        if len(wins_move) != 0:
-            worker_dataset = choice(wins_move)
-        # elif len(draw_move) != 0:
-        #    worker_dataset = choice(draw_move)
+        # if len(wins_move) != 0:
+        #    worker_dataset = choice(wins_move)
+        #elif len(draw_move) != 0:
+        #   worker_dataset = choice(draw_move)
 
         if worker_dataset != None:
             coord = self.getXYFromChar(worker_dataset[max(0, len(current_string))])
