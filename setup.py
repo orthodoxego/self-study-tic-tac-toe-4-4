@@ -17,18 +17,19 @@ class Setup(metaclass=Single):
         #  1 - бот с человеком (бот ходит первым)
         # 10 - человек с ботом
         # 11 - человек-человек
-        self.configGame = 0
+        self.config_game = 0
 
-        # Пауза для "обдумывания" хода ботом, в кадрах (FPS = 1 секунда)
-        self.pause_frame_per_bot = self.FPS // 2
+        # Пауза между раундами
+        # 0 - ждать щелчка ЛКМ
+        self.pause_round = 0.2
 
         # Ширина и высота окна для оконного режима
         self._screen_width = 1024
         self._screen_height = 768
 
-        # Пауза между раундами. 0 - ждать щелчка ЛКМ
+        # Пауза между ходами. 0 - ждать щелчка ЛКМ
         # Если, например, значение 0.5 - то пауза в 0.5 секунды
-        self.pause_per_round = 0.01
+        self.wait_for_move = 0.001
 
         # Номера фигур, 0 - бот, 1 - игрок, 2 - пустая клетка
         self.figure01 = 0
@@ -39,7 +40,10 @@ class Setup(metaclass=Single):
         self.clear_field = 2
 
         # Размер доски X * X, но не меньше 4х
-        self.__board_lenght = 4
+        self.__board_lenght = 5
+        # Длина линии для победы
+        self.__win_lenght = 4
+
         self.setStartPoint()
 
         # Файл датасета
@@ -48,6 +52,8 @@ class Setup(metaclass=Single):
         else:
             name = str(self.board_lenght)
         self.dataset_file_name = f"dataset{name}.dat"
+        # Записывать ли новые решения в файл датасета
+        self.saveData = True
 
         # Цвета
         self.BLACK = (0, 0, 0)
@@ -56,6 +62,7 @@ class Setup(metaclass=Single):
         self.GREEN = (0, 255, 0)
         self.BLUE = (0, 0, 255)
         self.LIGHT_BLUE = (175, 218, 252)
+        self.LIGHT_RED = (252, 175, 218)
         self.YELLOW = (255, 255, 0)
 
     @property
@@ -81,6 +88,13 @@ class Setup(metaclass=Single):
         if self.__board_lenght < 4:
             self.__board_lenght = 4
         return self.__board_lenght
+
+    @property
+    def win_lenght(self):
+        if self.__win_lenght < 4:
+            self.__win_lenght = 4
+        return self.__win_lenght
+
 
 
     def setStartPoint(self):

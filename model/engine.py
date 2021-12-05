@@ -37,15 +37,15 @@ class TicTacEngine:
                                 GameState.PLAYER: self.playerOneMove,
                                 "TYPE": ["Игрок", "Игрок"]}
 
-        if self.setup.configGame == 10:
+        if self.setup.config_game == 10:
             self.__move_function = {GameState.BOT: self.runBotMove,
                                     GameState.PLAYER: self.playerOneMove,
                                     "TYPE": ["Игрок", "БОТ"]}
-        elif self.setup.configGame == 1:
-            self.__move_function = {GameState.BOT: self.playerOneMove,
+        elif self.setup.config_game == 1:
+            self.__move_function = {GameState.BOT: self.playerTwoMove,
                                     GameState.PLAYER: self.runBotMove,
                                     "TYPE": ["БОТ", "Игрок"]}
-        elif self.setup.configGame == 0:
+        elif self.setup.config_game == 0:
             self.__move_function = {GameState.BOT: self.runBotMove,
                                     GameState.PLAYER: self.runBotMove,
                                     "TYPE": ["БОТ", "БОТ"]}
@@ -71,24 +71,32 @@ class TicTacEngine:
         result_controller *= self.__controller.act(pygame, delta)
 
         if self.__game_state == GameState.WINGAME or self.__game_state == GameState.DRAWGAME:
-            if self.setup.pause_per_round == 0:
+            if self.setup.pause_round == 0:
                 if result_controller == self.__controller.PRESSED_LEFT_KEY_MOUSE:
                     self.restartGame()
             else:
-                if self.__count_frame > self.setup.FPS * self.setup.pause_per_round:
+                if self.__count_frame > self.setup.FPS * self.setup.pause_round:
                     self.restartGame()
         elif self.__game_state == GameState.PLAYER or self.__game_state == GameState.BOT:
-            # Отрабатывает ход игрока или бота
             if self.__game_state == GameState.PLAYER:
-                if self.setup.configGame == 0:
-                    if self.__count_frame > self.setup.FPS * self.setup.pause_per_round:
+                if self.setup.config_game == 0:
+                    if self.__count_frame > self.setup.FPS * self.setup.wait_for_move:
                         self.runMove(self.__move_function[self.__game_state]())
                         self.__count_frame = 0
-                elif result_controller == self.__controller.PRESSED_LEFT_KEY_MOUSE:
+                elif self.setup.config_game >= 10 and result_controller == self.__controller.PRESSED_LEFT_KEY_MOUSE:
                     self.runMove(self.__move_function[self.__game_state]())
                     self.__count_frame = 0
+                elif self.setup.config_game == 1:
+                    if self.__count_frame > self.setup.FPS * self.setup.wait_for_move:
+                        self.runMove(self.__move_function[self.__game_state]())
+                        self.__count_frame = 0
+
             if self.__game_state == GameState.BOT:
-                if self.__count_frame > self.setup.FPS * self.setup.pause_per_round:
+                if self.setup.config_game == 11 or self.setup.config_game == 1:
+                    if result_controller == self.__controller.PRESSED_LEFT_KEY_MOUSE:
+                        self.runMove(self.__move_function[self.__game_state]())
+                        self.__count_frame = 0
+                elif self.__count_frame > self.setup.FPS * self.setup.wait_for_move:
                     self.runMove(self.__move_function[self.__game_state]())
                     self.__count_frame = 0
 
@@ -110,18 +118,41 @@ class TicTacEngine:
         # ФПС
         self.__view.draw_texture(scene, 10, 10,
                                  self.__text.getSystemText("FPS", f"FPS: {int(clock.get_fps())}", self.setup.GREEN))
-        self.__view.draw_texture(scene, 10, 45,
+        self.__view.draw_texture(scene, 10, 70,
                                  self.__text.getSystemText("COUNT_WIN_1",
                                                            f"{self.__move_function['TYPE'][0]}: {self.__count_win_player_and_bot[0]}",
-                                                           self.setup.RED))
-        self.__view.draw_texture(scene, 10, 70,
+                                                           self.setup.LIGHT_RED))
+        self.__view.draw_texture(scene, 10, 100,
                                  self.__text.getSystemText("COUNT_WIN_2",
                                                            f"{self.__move_function['TYPE'][1]}: {self.__count_win_player_and_bot[1]}",
                                                            self.setup.LIGHT_BLUE))
-        self.__view.draw_texture(scene, 10, 95,
+        self.__view.draw_texture(scene, 10, 130,
                                  self.__text.getSystemText("DRAW",
                                                            f"Ничья: {self.__count_win_player_and_bot[2]}",
                                                            self.setup.YELLOW))
+
+        if not self.setup.saveData:
+            self.__view.draw_texture(scene, 10, self.setup.screen_height - 30,
+                                     self.__text.getSystemText("SAVEDATA",
+                                                               "Запись датасета: ВЫКЛ.",
+                                                               self.setup.RED))
+        else:
+            self.__view.draw_texture(scene, 10, self.setup.screen_height - 30,
+                                     self.__text.getSystemText("SAVEDATA",
+                                                               "Запись датасета: ВКЛ.",
+                                                               self.setup.GREEN))
+
+        if self.setup.config_game == 0:
+
+            self.__view.draw_texture(scene, 10, self.setup.screen_height - 50,
+                                     self.__text.getSystemText("LEARN",
+                                                               "Обучение ботов: ВКЛ.",
+                                                               self.setup.GREEN))
+            self.__view.draw_texture(scene, self.setup.screen_width // 2.3, self.setup.screen_height - 30,
+                                     self.__text.getSystemText("LEARN",
+                                                               "В setup.py значение self.config_game = 10, чтобы сыграть с ботом",
+                                                               self.setup.YELLOW))
+
 
     def draw(self, scene, clock):
 
@@ -171,9 +202,9 @@ class TicTacEngine:
         return res
 
     def checkDrawGame(self, field):
-        # Самое коряво написанное, но быстрое копирование в Python
 
-        for_player = [x[:] for x in field]
+        # Самое коряво написанное, но быстрое копирование в Python
+        for_player = [f[:] for f in field]
 
         for i in range(len(for_player)):
             for j in range(len(for_player[i])):
@@ -229,14 +260,14 @@ class TicTacEngine:
 
 
         self.__view.draw_win_cells(scene, self.__datamodel.field, self.__result_game)
-        if self.setup.pause_per_round == 0:
+        if self.setup.pause_round == 0:
             txt = self.__text.getSystemText("PRESS_LKM", f"Нажмите левую кнопку мыши для продолжения.",
                                             self.setup.YELLOW)
             self.__view.draw_texture(scene, (self.setup.screen_width - txt.get_width()) // 2,
                                      self.setup.screen_height - txt.get_height() * 2, txt)
         else:
             txt = self.__text.getSystemText("NEXT_LEVEL",
-                                            f"Новый раунд... {1 + (self.setup.pause_per_round * self.setup.FPS - self.__count_frame) // 60}",
+                                            f"Новый раунд... {1 + (self.setup.pause_round * self.setup.FPS - self.__count_frame) // 60}",
                                             self.setup.YELLOW)
             self.__view.draw_texture(scene, (self.setup.screen_width - txt.get_width()) // 2,
                                      self.setup.screen_height - txt.get_height() * 2, txt)
@@ -245,10 +276,10 @@ class TicTacEngine:
         next_move = {"X": -1, "Y": -1, "DATA": self.setup.figure01}
         result_state = None
         if self.__game_state == GameState.PLAYER:
-            next_move = self.study.getNextMove(self.setup.figure01, self.setup.figure02)
+            next_move = self.study.getNextMove(self.setup.figure01, self.setup.figure02, self.__datamodel.field)
             result_state = GameState.BOT
         elif self.__game_state == GameState.BOT:
-            next_move = self.study.getNextMove(self.setup.figure02, self.setup.figure01)
+            next_move = self.study.getNextMove(self.setup.figure02, self.setup.figure01, self.__datamodel.field)
             result_state = GameState.PLAYER
 
         x = next_move["X"]

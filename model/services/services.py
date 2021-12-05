@@ -34,7 +34,8 @@ class Services:
 
     def getWinningCells(self, field, setup):
         """Определяет, выграл ли игрок.
-        В случае выигрыша возвращает кортеж с координатами клеток-победителей и номером победителя."""
+        В случае выигрыша возвращает кортеж с координатами
+        клеток-победителей и "WIN" номером победителя."""
 
         winCells = []
         res = {"WIN": setup.clear_field * 20, "CELLS": winCells}
@@ -98,6 +99,8 @@ class Services:
                         res["CELLS"] = tuple(winCells)
                         return res
 
+        # Поиск диагональных совпадений. Берём точку отсчёта и
+        # от неё ищем "влево-вверх" относительно поля
         for x in range(l - 1, 2, -1):
             for y in range(l - 1, 2, -1):
                 diag = self.getDiagonalLeftUp(x, y, field)
