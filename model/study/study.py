@@ -148,10 +148,11 @@ class Study:
                 result["Y"] = coord["Y"]
             else:
                 # Поиск хода-защиты
-                coord = self.getDefendedMove(figure_lose, copy_field)
+                coord = self.getDefendMove(figure_lose, copy_field)
                 if coord != None:
                     result["X"] = coord["X"]
                     result["Y"] = coord["Y"]
+                self.log(f"[{result['X']}][{result['Y']}]")
 
         self.workspace.clear()
         if len(wins_move) > 0:
@@ -172,18 +173,6 @@ class Study:
         for x in range(len(field)):
             for y in range(len(field[x])):
                 if field[x][y] == figure:
-                    # if x - 1 >= 0:
-                    #     if field[x - 1][y] == self.setup.clear_field:
-                    #         choice_cells.append([x - 1, y])
-                    # if x + 1 < self.setup.board_lenght:
-                    #     if field[x + 1][y] == self.setup.clear_field:
-                    #         choice_cells.append([x + 1, y])
-                    # if y + 1 < self.setup.board_lenght:
-                    #     if field[x][y + 1] == self.setup.clear_field:
-                    #         choice_cells.append([x, y + 1])
-                    # if y - 1 >= 0:
-                    #     if field[x][y - 1] == self.setup.clear_field:
-                    #         choice_cells.append([x, y - 1])
                     if x + 1 < self.setup.board_lenght and y + 1 < self.setup.board_lenght:
                         if field[x + 1][y + 1] == self.setup.clear_field:
                             choice_cells.append([x + 1, y + 1])
@@ -197,7 +186,26 @@ class Study:
                         if field[x + 1][y - 1] == self.setup.clear_field:
                             choice_cells.append([x + 1, y - 1])
 
-        # Если не найдена подходящая клетка, то добавить случайную
+
+        # Если не найдено, то найти соседствующую клетку слева или справа от фигуры
+        if len(choice_cells) == 0:
+            for x in range(len(field)):
+                for y in range(len(field[x])):
+                    if field[x][y] == figure:
+                        if x - 1 >= 0:
+                            if field[x - 1][y] == self.setup.clear_field:
+                                choice_cells.append([x - 1, y])
+                        if x + 1 < self.setup.board_lenght:
+                            if field[x + 1][y] == self.setup.clear_field:
+                                choice_cells.append([x + 1, y])
+                        if y + 1 < self.setup.board_lenght:
+                            if field[x][y + 1] == self.setup.clear_field:
+                                choice_cells.append([x, y + 1])
+                        if y - 1 >= 0:
+                            if field[x][y - 1] == self.setup.clear_field:
+                                choice_cells.append([x, y - 1])
+
+        # Если до сих пор не найдена подходящая клетка, то добавить случайную
         if len(choice_cells) == 0:
             for x in range(len(field)):
                 for y in range(len(field[x])):
@@ -211,309 +219,102 @@ class Study:
         return ret
 
     def getAttackMove(self, figure, field):
-        result = None
+        """Вернёт клетку для атаки. Формат: словарь {"X": x, "Y", y}"""
+        coord = {"X": None, "Y": None}
+                  # Предполагаемый ход
+        pr = self.getSupposition(".XXX", figure, field)
+        if pr != None:
+            coord["X"] = pr[0][0]
+            coord["Y"] = pr[0][1]
+            return coord
 
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getHorizontalOfTemplate("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
+        pr = self.getSupposition("X.XX", figure, field)
+        if pr != None:
+            coord["X"] = pr[0][0]
+            coord["Y"] = pr[0][1]
+            return coord
 
-        for x in range(len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getVerticalOfTemplate("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
+        return None
 
-        for x in range(self.setup.win_lenght - 1, len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getDiagonalDownUp("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
+    def getDefendMove(self, figure, field):
+        """Вернёт клетку для защиты. Формат: словарь {"X": x, "Y", y}"""
+        coord = {"X": None, "Y": None}
+                  # Предполагаемый ход
+        pr = self.getSupposition(".XXX", figure, field)
+        if pr != None:
+            coord["X"] = pr[0][0]
+            coord["Y"] = pr[0][1]
+            return coord
 
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getDiagonalUpDown("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
+        pr = self.getSupposition("X.XX", figure, field)
+        if pr != None:
+            coord["X"] = pr[0][0]
+            coord["Y"] = pr[0][1]
+            return coord
+
+        pr = self.getSupposition("XX..", figure, field)
+        if pr != None:
+            coord["X"] = pr[0][0]
+            coord["Y"] = pr[0][1]
+            return coord
+
+        pr = self.getSupposition("X.X.", figure, field)
+        if pr != None:
+            coord["X"] = pr[0][0]
+            coord["Y"] = pr[0][1]
+            return coord
+
+        return None
+
+    def getSupposition(self, template, figure, field) -> list:
+
+        # Поиск по вертикали относительно изображения
+        for h in range(len(field)):
+            for w in range(len(field[h]) - len(template) + 1):
+                r = self.getTemplate(h, w, template, figure, field, offcetX=0, offcetY=1, count=0)
+                if len(r) > 0:
+                    return r
+
+        # Поиск по горизонтали относительно изображения
+        for w in range(len(field)):
+            for h in range(len(field[h]) - len(template) + 1):
+                r = self.getTemplate(h, w, template, figure, field, offcetX=1, offcetY=0, count=0)
+                if len(r) > 0:
+                    return r
+
+        # Поиск по диагонали сверху-вправо относительно изображения
+        for h in range(len(field) - len(template) + 1):
+            for w in range(len(field[h]) - len(template) + 1):
+                r = self.getTemplate(h, w, template, figure, field, offcetX=1, offcetY=1, count=0)
+                if len(r) > 0:
+                    return r
+
+        # Поиск по диагонали сверху-влево относительно изображения
+        for h in range(len(field) - len(template) + 1):
+            for w in range(len(field[h]) - len(template) + 1, len(field[h])):
+                r = self.getTemplate(h, w, template, figure, field, offcetX=1, offcetY=-1, count=0)
+                if len(r) > 0:
+                    return r
+
+        return None
+
+    def getTemplate(self, x, y, template, figure, field, offcetX, offcetY, count) -> list:
+        result = []
+
+        r = True
+        i = 0
+        while i < len(template) and r:
+            if template[i] == "X" and field[x + i * offcetX][y + i * offcetY] != figure:
+                r = False
+            elif template[i] == "." and field[x + i * offcetX][y + i * offcetY] == self.setup.clear_field:
+                result.append([x + i * offcetX, y + i * offcetY])
+            elif template[i] == "." and field[x + i * offcetX][y + i * offcetY] != self.setup.clear_field:
+                r = False
+            i += 1
+
+        if not r:
+            result.clear()
+        if len(result) == 0 and count == 0:
+            return self.getTemplate(x, y, template[::-1], figure, field, offcetX, offcetY, count + 1)
 
         return result
-
-    def getDefendedMove(self, figure, field):
-        result = None
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getHorizontalOfTemplate("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getVerticalOfTemplate("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(self.setup.win_lenght - 1, len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getDiagonalDownUp("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown(".XXX", figure, field, x, y)
-                if result != None:
-                    return result
-                result = self.getDiagonalUpDown("X.XX", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate("X.Xb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate("X.Xb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(self.setup.win_lenght - 1, len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp("X.Xb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown("X.Xb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate(".XXb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate(".XXb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(self.setup.win_lenght - 1, len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp(".XXb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown(".XXb", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate("XX.b", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate("XX.b", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(self.setup.win_lenght - 1, len(field)):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp("XX.b", figure, field, x, y)
-                if result != None:
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown("XX.b", figure, field, x, y)
-                if result != None:
-                    return result
-
-        return result
-
-    def getHorizontalOfTemplate(self, template, number, field, x, y):
-        """Возвращает координаты . из шаблона. Поиск по горизонтали."""
-
-        need_overlap = template.count("X")
-
-        # Поиск в прямой строке
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x + i][y] == number:
-                overlap += 1
-            elif template[i] == "." and field[x + i][y] == self.setup.clear_field:
-                res = {"X": x + i, "Y": y}
-            elif template[i] == "b" and field[x + i][y] != self.setup.clear_field:
-                overlap += 1
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        # Поиск в инвертированной строке
-        if template == template[::1]:
-            return None
-
-        template = template[::-1]
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x + i][y] == number:
-                overlap += 1
-            elif template[i] == "." and field[x + i][y] == self.setup.clear_field:
-                res = {"X": x + i, "Y": y}
-            elif template[i] == "b" and field[x + i][y] != self.setup.clear_field:
-                overlap += 1
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        return None
-
-    def getVerticalOfTemplate(self, template, number, field, x, y):
-        """Возвращает координаты . из шаблона. Поиск по вертикали."""
-
-        need_overlap = template.count("X")
-
-        # Поиск в прямой строке
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x][y + i] == number:
-                overlap += 1
-            elif template[i] == "." and field[x][y + i] == self.setup.clear_field:
-                res = {"X": x, "Y": y + i}
-            elif template[i] == "b" and field[x][y + i] != self.setup.clear_field:
-                overlap += 1
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        # Поиск в инвертированной строке
-        if template == template[::1]:
-            return None
-        template = template[::-1]
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x][y + i] == number:
-                overlap += 1
-            elif template[i] == "." and field[x][y + i] == self.setup.clear_field:
-                res = {"X": x, "Y": y + i}
-            elif template[i] == "b" and field[x][y + i] != self.setup.clear_field:
-                overlap += 1
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        return None
-    
-    def getDiagonalDownUp(self, template, number, field, x, y):
-        """Возвращает координаты . из шаблона. Поиск по горизонтали."""
-
-        need_overlap = template.count("X")
-
-        # Поиск в прямой строке
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x - i][y + i] == number:
-                overlap += 1
-            elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
-                res = {"X": x - i, "Y": y + i}
-            elif template[i] == "b" and field[x - i][y + i] != self.setup.clear_field:
-                overlap += 1
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        # Поиск в инвертированной строке
-        if template == template[::1]:
-            return None
-        template = template[::-1]
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x - i][y + i] == number:
-                overlap += 1
-            elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
-                res = {"X": x - i, "Y": y + i}
-            elif template[i] == "b" and field[x - i][y + i] != self.setup.clear_field:
-                overlap += 1
-
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        return None
-    
-    def getDiagonalUpDown(self, template, number, field, x, y):
-        """Возвращает координаты . из шаблона. Поиск по горизонтали."""
-
-        need_overlap = template.count("X")
-
-        # Поиск в прямой строке
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x + i][y + i] == number:
-                overlap += 1
-            elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
-                res = {"X": x + i, "Y": y + i}
-            elif template[i] == "b" and field[x + i][y + i] != self.setup.clear_field:
-                overlap += 1
-
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        # Поиск в инвертированной строке
-        if template == template[::1]:
-            return None
-        template = template[::-1]
-        overlap = 0
-        res = None
-        for i in range(len(template)):
-            if template[i] == "X" and field[x + i][y + i] == number:
-                overlap += 1
-            elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
-                res = {"X": x + i, "Y": y + i}
-            elif template[i] == "b" and field[x + i][y + i] != self.setup.clear_field:
-                overlap += 1
-
-        if overlap == need_overlap and res != None:
-            return res
-
-        return None
