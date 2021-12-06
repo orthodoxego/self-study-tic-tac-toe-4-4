@@ -129,6 +129,13 @@ class Study:
                 result["X"] = xT
                 result["Y"] = xT
         elif worker_dataset != None:
+            copy_field = [f[:] for f in field]
+            # Поиск хода-завершения
+            coord = self.getAttackMove(figure_win, copy_field)
+            if coord != None:
+                result["X"] = coord["X"]
+                result["Y"] = coord["Y"]
+            else:
                 coord = self.getXYFromChar(worker_dataset[max(0, len(current_string))])
                 result["X"] = coord[0]
                 result["Y"] = coord[1]
