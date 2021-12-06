@@ -18,6 +18,8 @@ class Study:
         self.info_template = TemplateInfo()
         self.dataset = self.readDataAll()
         self.workspace = []
+        # Для дампа для записи в датасет (выгружает каждые 50 записей)
+        self.saved_dump = []
         self.initialize()
 
         self.digit = ""
@@ -50,7 +52,7 @@ class Study:
         self.info_template.count = len(result)
         return result
 
-    def saveDataAll(self):
+    def saveDataAll(self, end=False):
         if not self.setup.saveData:
             return False
 
@@ -58,15 +60,21 @@ class Study:
             last = f"{self.setup.figure01}{self.setup.figure02}{self.setup.clear_field}"
             if self.__current_game[-1] in last:
                 if not (self.__current_game in self.dataset):
+                    self.saved_dump.insert(0, self.__current_game)
                     self.dataset.insert(0, self.__current_game)
-        try:
-            f = open(self.file, "w", encoding="UTF-8")
-            for i in range(len(self.dataset)):
-                f.write(self.dataset[i] + "\n")
-            f.close()
-            return True
-        except:
-            print("Невозможно сохранить файл.")
+
+        if len(self.saved_dump) > 50 or end:
+            try:
+                f = open(self.file, "w", encoding="UTF-8")
+                for i in range(len(self.dataset)):
+                    f.write(self.dataset[i] + "\n")
+                f.close()
+                print("Дамп датасета выгружен.")
+                self.saved_dump.clear()
+                return True
+            except:
+                print("Невозможно сохранить файл.")
+
         return False
 
     def addWin(self, winning):
@@ -124,10 +132,13 @@ class Study:
             self.info_template.template = "Нет шаблона"
 
         if len(current_string) <= 1 and randint(0, 100) < 90:
+            # xT = 1 + randint(0, self.setup.board_lenght // 4)
+            # yT = 1 + randint(0, self.setup.board_lenght // 4)
             xT = self.setup.board_lenght // 2
-            if field[xT][xT] == self.setup.clear_field:
+            yT = self.setup.board_lenght // 2
+            if field[xT][yT] == self.setup.clear_field:
                 result["X"] = xT
-                result["Y"] = xT
+                result["Y"] = yT
         elif worker_dataset != None:
             copy_field = [f[:] for f in field]
             # Поиск хода-завершения

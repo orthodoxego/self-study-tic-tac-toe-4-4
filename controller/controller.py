@@ -86,6 +86,15 @@ class Controller:
 
         return result
 
+class ControllerGameMenu(Controller):
+
+    def __init__(self):
+        super().__init__()
+
+    def pressESCAPE(self):
+        """Пользователь нажал Escape."""
+        return 27
+
 class ControllerGame(Controller):
 
     def __init__(self):

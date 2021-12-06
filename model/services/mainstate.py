@@ -2,4 +2,5 @@ from enum import Enum
 
 class MainState(Enum):
     VIEW_MENU = 0
-    DRAW_GAME = 1
+    CREATE_OBJECT = 1
+    DRAW_GAME = 2

@@ -1,4 +1,6 @@
 import pygame
+
+from menu.gamemenu import GameMenu
 from setup import Setup
 from model.engine import TicTacEngine
 from model.services.mainstate import MainState
@@ -11,8 +13,8 @@ class Game:
         pygame.init()
 
         self.setup = Setup()
-        # self.__main_state = MainState.VIEW_MENU
-        self.__main_state = MainState.DRAW_GAME
+        self.__main_state = MainState.VIEW_MENU
+        # self.__main_state = MainState.DRAW_GAME
 
         if width + height == 0:
             width = pygame.display.Info().current_w
@@ -31,10 +33,10 @@ class Game:
 
         self.playGame = True
         self.__delta = 0
+        self.__control = 0
 
-        # Игровой движок (модель)
-        # Она же создаёт и представление, и контроллер, и игровые объекты
-        self.__tic_tac_toe = TicTacEngine()
+        # Главное меню
+        self.__game_menu = GameMenu(pygame, self.setup)
 
     @property
     def WIDTH(self):
@@ -52,14 +54,23 @@ class Game:
             self.scene.fill(self.setup.BLACK)
 
             if self.__main_state == MainState.VIEW_MENU:
-                pass
+                self.__game_menu.draw(pygame, self.scene)
             elif self.__main_state == MainState.DRAW_GAME:
                 self.__tic_tac_toe.draw(self.scene, self.clock, self.__delta)
 
             pygame.display.flip()
 
             if self.__main_state == MainState.VIEW_MENU:
-                pass
+                self.__control = self.__game_menu.act(pygame, self.__delta)
+                if self.__control == 27 or self.__control == False:
+                    self.playGame = False
+                elif self.__control == 10:
+                    self.__main_state = MainState.CREATE_OBJECT
+            elif self.__main_state == MainState.CREATE_OBJECT:
+                # Игровой движок (модель)
+                # Она же создаёт и представление, и контроллер, и игровые объекты
+                self.__tic_tac_toe = TicTacEngine()
+                self.__main_state = MainState.DRAW_GAME
             elif self.__main_state == MainState.DRAW_GAME:
                 # Клавиатура + расчёты
                 self.playGame = self.__tic_tac_toe.controller(pygame, self.__delta)

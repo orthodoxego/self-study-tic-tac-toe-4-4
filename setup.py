@@ -17,15 +17,15 @@ class Setup(metaclass=Single):
         #  1 - бот с человеком (бот ходит первым)
         # 10 - человек с ботом
         # 11 - человек-человек
-        self.config_game = 1
+        self.config_game = 11
 
         # Пауза между раундами
         # 0 - ждать щелчка ЛКМ
-        self.pause_round = 1.5
+        self.pause_round = 1.00
 
         # Пауза между ходами. 0 - ждать щелчка ЛКМ
         # Если, например, значение 0.5 - то пауза в 0.5 секунды
-        self.wait_for_move = 0.1
+        self.wait_for_move = 0.005
 
         # Ширина и высота окна для оконного режима
         self._screen_width = 1024
@@ -65,6 +65,7 @@ class Setup(metaclass=Single):
         self.LIGHT_BLUE = (175, 218, 252)
         self.LIGHT_RED = (252, 175, 218)
         self.YELLOW = (255, 255, 0)
+        self.ULTRAMARINE = (18, 10, 143)
 
     @property
     def screen_width(self):

@@ -65,7 +65,6 @@ class TicTacEngine:
         self.__game_state = self.default_state
         self.study.initialize()
         self.__count_frame = 0
-
         # Результат игры
         self.__result_game = None
 
@@ -106,7 +105,7 @@ class TicTacEngine:
 
 
         if not result_controller:
-            self.study.saveDataAll()
+            self.study.saveDataAll(end=True)
 
         return result_controller
 
@@ -255,6 +254,7 @@ class TicTacEngine:
             else:
                 self.study.addWin(self.__result_game["WIN"])
                 self.study.saveDataAll()
+
                 self.__count_win_player_and_bot[int(self.__result_game["WIN"])] += 1
                 self.__count_frame = 0
                 self.__game_state = GameState.WINGAME
