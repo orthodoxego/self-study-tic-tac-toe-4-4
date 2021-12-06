@@ -115,7 +115,7 @@ class Study:
             worker_dataset = choice(wins_move)
             self.info_template.chars = f"{worker_dataset}"
             self.info_template.template = "Победа"
-        elif len(draw_move) != 0 and figure_win == self.setup.figure02:
+        elif False and len(draw_move) != 0:
             worker_dataset = choice(draw_move)
             self.info_template.chars = f"{worker_dataset}"
             self.info_template.template = "Ничья"
@@ -152,7 +152,11 @@ class Study:
                 if coord != None:
                     result["X"] = coord["X"]
                     result["Y"] = coord["Y"]
-                self.log(f"[{result['X']}][{result['Y']}]")
+                else:
+                    coord = self.getSecondAttackMove(figure_win, copy_field)
+                    if coord != None:
+                        result["X"] = coord["X"]
+                        result["Y"] = coord["Y"]
 
         self.workspace.clear()
         if len(wins_move) > 0:
@@ -218,6 +222,24 @@ class Study:
 
         return ret
 
+    def getSecondAttackMove(self, figure, field):
+        """Вернёт клетку для вторичной атаки. Формат: словарь {"X": x, "Y", y}"""
+        coord = {"X": None, "Y": None}
+
+        pr = self.getSupposition(".X.X.", figure, field)
+        if pr != None:
+            coord["X"] = pr[1][0]
+            coord["Y"] = pr[1][1]
+            return coord
+
+        pr = self.getSupposition("XX..", figure, field)
+        if pr != None:
+            coord["X"] = pr[1][0]
+            coord["Y"] = pr[1][1]
+            return coord
+
+        return None
+
     def getAttackMove(self, figure, field):
         """Вернёт клетку для атаки. Формат: словарь {"X": x, "Y", y}"""
         coord = {"X": None, "Y": None}
@@ -252,13 +274,13 @@ class Study:
             coord["Y"] = pr[0][1]
             return coord
 
-        pr = self.getSupposition("XX..", figure, field)
+        pr = self.getSupposition("X.X", figure, field)
         if pr != None:
             coord["X"] = pr[0][0]
             coord["Y"] = pr[0][1]
             return coord
 
-        pr = self.getSupposition("X.X.", figure, field)
+        pr = self.getSupposition("XX..", figure, field)
         if pr != None:
             coord["X"] = pr[0][0]
             coord["Y"] = pr[0][1]

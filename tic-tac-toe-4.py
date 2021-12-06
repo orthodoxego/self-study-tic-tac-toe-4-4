@@ -1,6 +1,7 @@
 import pygame
 from setup import Setup
 from model.engine import TicTacEngine
+from model.services.mainstate import MainState
 
 class Game:
     """Класс-шаблон для игр на базе pygame."""
@@ -10,6 +11,8 @@ class Game:
         pygame.init()
 
         self.setup = Setup()
+        # self.__main_state = MainState.VIEW_MENU
+        self.__main_state = MainState.DRAW_GAME
 
         if width + height == 0:
             width = pygame.display.Info().current_w
@@ -47,12 +50,20 @@ class Game:
 
             # Отрисовка
             self.scene.fill(self.setup.BLACK)
-            self.__tic_tac_toe.draw(self.scene, self.clock)
+
+            if self.__main_state == MainState.VIEW_MENU:
+                pass
+            elif self.__main_state == MainState.DRAW_GAME:
+                self.__tic_tac_toe.draw(self.scene, self.clock, self.__delta)
+
             pygame.display.flip()
 
-            # Клавиатура + расчёты
-            self.playGame = self.__tic_tac_toe.controller(pygame, self.__delta)
-            self.playGame *= self.__tic_tac_toe.act(pygame, self.__delta)
+            if self.__main_state == MainState.VIEW_MENU:
+                pass
+            elif self.__main_state == MainState.DRAW_GAME:
+                # Клавиатура + расчёты
+                self.playGame = self.__tic_tac_toe.controller(pygame, self.__delta)
+                self.playGame *= self.__tic_tac_toe.act(pygame, self.__delta)
 
             # Delta-time для коррекции анимации
             self.__delta = self.clock.tick(self.setup.FPS) / 1000

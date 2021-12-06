@@ -168,14 +168,14 @@ class TicTacEngine:
                                                                self.setup.GRAY))
 
 
-    def draw(self, scene, clock):
+    def draw(self, scene, clock, delta):
 
         # Системные сообщения
         self.draw_system_messages(scene, clock)
 
         # Состояние игры при победе или ничье
         if self.__game_state == GameState.WINGAME or self.__game_state == GameState.DRAWGAME:
-            self.draw_win_or_draw_game(scene)
+            self.draw_win_or_draw_game(scene, delta)
         else:
             # Отрисует активную клетку в зависимости от курсора мыши
             xy = self.__services.getPositionSelectedCells(self.__controller.mouse_x, self.__controller.mouse_y, self.setup)
@@ -259,7 +259,7 @@ class TicTacEngine:
                 self.__count_frame = 0
                 self.__game_state = GameState.WINGAME
 
-    def draw_win_or_draw_game(self, scene):
+    def draw_win_or_draw_game(self, scene, delta):
         if self.__game_state == GameState.WINGAME:
             txt = self.__text.getBigText("WIN_TEXT", f"Игра закончена. Счёт: {self.__count_win_player_and_bot[0]}:{self.__count_win_player_and_bot[1]}",
                                             self.setup.GREEN)
@@ -281,7 +281,7 @@ class TicTacEngine:
                                      self.setup.screen_height - txt.get_height() * 2, txt)
         else:
             txt = self.__text.getSystemText("NEXT_LEVEL",
-                                            f"Новый раунд... {1 + (self.setup.pause_round * self.setup.FPS - self.__count_frame) // 60}",
+                                            f"Новый раунд... {int(1 + (self.setup.pause_round * self.setup.FPS - self.__count_frame) // self.setup.FPS)}",
                                             self.setup.YELLOW)
             self.__view.draw_texture(scene, (self.setup.screen_width - txt.get_width()) // 2,
                                      self.setup.screen_height - txt.get_height() * 3, txt)
