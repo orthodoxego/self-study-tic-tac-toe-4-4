@@ -15,7 +15,11 @@ from view.view import View
 
 
 class TicTacEngine:
-    """Игровой движок. Включает и организует взаимодействие всего со всем."""
+    """Игровой движок. Включает и организует взаимодействие всего со всем:
+    -- формирует игровое поле;
+    -- ведёт учёт побед/поражений;
+    -- отрисовывает картинку;
+    -- обеспечивает вызовы поиска ходов и анализа базы ходов."""
 
     def __init__(self):
         self.setup = Setup()
@@ -290,12 +294,12 @@ class TicTacEngine:
         else:
             segment = None
             if self.__game_state == GameState.PLAYER:
-                segment = self.study.getSegment(self.setup.figure01, self.__datamodel.field)
+                segment = self.study.getSegment(self.setup.figure02, self.__datamodel.field)
                 x = segment["X"]
                 y = segment["Y"]
                 self.__datamodel.field[x][y] = self.setup.figure01
             elif self.__game_state == GameState.BOT:
-                segment = self.study.getSegment(self.setup.figure02, self.__datamodel.field)
+                segment = self.study.getSegment(self.setup.figure01, self.__datamodel.field)
                 x = segment["X"]
                 y = segment["Y"]
                 self.__datamodel.field[x][y] = self.setup.figure02

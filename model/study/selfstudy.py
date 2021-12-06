@@ -17,7 +17,7 @@ class SelfStudy:
             self.digit += chr(i)
 
     def log(self, s):
-        # print(s)
+        print(s)
         pass
 
     def initialize(self):
@@ -100,8 +100,8 @@ class SelfStudy:
                     lose_move.append(data_set)
 
         worker_dataset = None
-        if len(wins_move) > 0:
-            worker_dataset = choice(wins_move)
+        # if len(wins_move) > 0:
+        #    worker_dataset = choice(wins_move)
         # elif len(draw_move) != 0:
         #     worker_dataset = choice(draw_move)
 
@@ -142,6 +142,7 @@ class SelfStudy:
 
     def getSegment(self, figure, field):
         """Вернёт случайную свободную позицию рядом с существующей клеткой."""
+        self.log("GetSegment")
         ret = {"X": -1, "Y": -1}
         choice_cells = []
         for x in range(len(field)):
@@ -172,10 +173,12 @@ class SelfStudy:
                         if field[x + 1][y - 1] == self.setup.clear_field:
                             choice_cells.append([x + 1, y - 1])
 
-        for x in range(len(field)):
-            for y in range(len(field[x])):
-                if field[x][y] == self.setup.clear_field:
-                    choice_cells.append([x, y])
+        # Если не найдена подходящая клетка, то добавить случайную
+        if len(choice_cells) == 0:
+            for x in range(len(field)):
+                for y in range(len(field[x])):
+                    if field[x][y] == self.setup.clear_field:
+                        choice_cells.append([x, y])
 
         final_cell = choice(choice_cells)
         ret["X"] = final_cell[0]
@@ -190,44 +193,36 @@ class SelfStudy:
             for y in range(len(field[x])):
                 result = self.getHorizontalOfTemplate(".XXX", figure, field, x, y)
                 if result != None:
-                    self.log("АТАКА 1")
                     return result
                 result = self.getHorizontalOfTemplate("X.XX", figure, field, x, y)
                 if result != None:
-                    self.log("АТАКА 2")
                     return result
 
         for x in range(len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
                 result = self.getVerticalOfTemplate(".XXX", figure, field, x, y)
                 if result != None:
-                    self.log("АТАКА 3")
                     return result
                 result = self.getVerticalOfTemplate("X.XX", figure, field, x, y)
                 if result != None:
-                    self.log("АТАКА 4")
+                    return result
+
+        for x in range(self.setup.win_lenght - 1, len(field)):
+            for y in range(len(field[x]) - self.setup.win_lenght + 1):
+                result = self.getDiagonalDownUp(".XXX", figure, field, x, y)
+                if result != None:
+                    return result
+                result = self.getDiagonalDownUp("X.XX", figure, field, x, y)
+                if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalLROfTemplate(".XXX", figure, field, x, y)
+                result = self.getDiagonalUpDown(".XXX", figure, field, x, y)
                 if result != None:
-                    self.log("АТАКА 5")
                     return result
-                result = self.getDiagonalLROfTemplate("X.XX", figure, field, x, y)
+                result = self.getDiagonalUpDown("X.XX", figure, field, x, y)
                 if result != None:
-                    self.log("АТАКА 6")
-                    return result
-
-        for x in range(self.setup.win_lenght - 1, len(field[x])):
-            for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalRLOfTemplate(".XXX", figure, field, x, y)
-                if result != None:
-                    self.log("АТАКА 7")
-                    return result
-                result = self.getDiagonalRLOfTemplate("X.XX", figure, field, x, y)
-                if result != None:
-                    self.log("АТАКА 8")
                     return result
 
         return result
@@ -238,7 +233,6 @@ class SelfStudy:
             for y in range(len(field[x])):
                 result = self.getHorizontalOfTemplate(".XXX", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 5")
                     return result
                 result = self.getHorizontalOfTemplate("X.XX", figure, field, x, y)
                 if result != None:
@@ -248,87 +242,99 @@ class SelfStudy:
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
                 result = self.getVerticalOfTemplate(".XXX", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 6")
                     return result
                 result = self.getVerticalOfTemplate("X.XX", figure, field, x, y)
                 if result != None:
                     return result
 
-        for x in range(len(field) - self.setup.win_lenght + 1):
+        for x in range(self.setup.win_lenght - 1, len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalLROfTemplate(".XXX", figure, field, x, y)
+                result = self.getDiagonalDownUp(".XXX", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 7")
                     return result
-                result = self.getDiagonalLROfTemplate("X.XX", figure, field, x, y)
+                result = self.getDiagonalDownUp("X.XX", figure, field, x, y)
                 if result != None:
                     return result
 
-        for x in range(self.setup.win_lenght - 1, len(field[x])):
+        for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalRLOfTemplate(".XXX", figure, field, x, y)
+                result = self.getDiagonalUpDown(".XXX", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 8")
                     return result
-                result = self.getDiagonalRLOfTemplate("X.XX", figure, field, x, y)
+                result = self.getDiagonalUpDown("X.XX", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 9")
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate("X.X", figure, field, x, y)
+                result = self.getHorizontalOfTemplate("X.X.", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 1")
                     return result
 
         for x in range(len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate("X.X", figure, field, x, y)
+                result = self.getVerticalOfTemplate("X.X.", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 2")
+                    return result
+
+        for x in range(self.setup.win_lenght - 1, len(field)):
+            for y in range(len(field[x]) - self.setup.win_lenght + 1):
+                result = self.getDiagonalDownUp("X.X.", figure, field, x, y)
+                if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalLROfTemplate("X.X", figure, field, x, y)
+                result = self.getDiagonalUpDown("X.X.", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 3")
-                    return result
-
-        for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(self.setup.win_lenght + 1, len(field[x])):
-                result = self.getDiagonalRLOfTemplate("X.X", figure, field, x, y)
-                if result != None:
-                    self.log("ЗАЩИТА 4")
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate("XX.", figure, field, x, y)
+                result = self.getHorizontalOfTemplate(".XX.", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 10")
                     return result
 
         for x in range(len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate("XX.", figure, field, x, y)
+                result = self.getVerticalOfTemplate(".XX.", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 11")
+                    return result
+
+        for x in range(self.setup.win_lenght - 1, len(field)):
+            for y in range(len(field[x]) - self.setup.win_lenght + 1):
+                result = self.getDiagonalDownUp(".XX.", figure, field, x, y)
+                if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalLROfTemplate("XX.", figure, field, x, y)
+                result = self.getDiagonalUpDown(".XX.", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 12")
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
-            for y in range(self.setup.win_lenght + 1, len(field[x])):
-                result = self.getDiagonalRLOfTemplate("XX.", figure, field, x, y)
+            for y in range(len(field[x])):
+                result = self.getHorizontalOfTemplate("XX..", figure, field, x, y)
                 if result != None:
-                    self.log("ЗАЩИТА 13")
+                    return result
+
+        for x in range(len(field)):
+            for y in range(len(field[x]) - self.setup.win_lenght + 1):
+                result = self.getVerticalOfTemplate("XX..", figure, field, x, y)
+                if result != None:
+                    return result
+
+        for x in range(self.setup.win_lenght - 1, len(field)):
+            for y in range(len(field[x]) - self.setup.win_lenght + 1):
+                result = self.getDiagonalDownUp("XX..", figure, field, x, y)
+                if result != None:
+                    return result
+
+        for x in range(len(field) - self.setup.win_lenght + 1):
+            for y in range(len(field[x]) - self.setup.win_lenght + 1):
+                result = self.getDiagonalUpDown("XX..", figure, field, x, y)
+                if result != None:
                     return result
 
         return result
@@ -351,6 +357,9 @@ class SelfStudy:
             return res
 
         # Поиск в инвертированной строке
+        if template == template[::1]:
+            return None
+
         template = template[::-1]
         overlap = 0
         res = None
@@ -383,6 +392,8 @@ class SelfStudy:
             return res
 
         # Поиск в инвертированной строке
+        if template == template[::1]:
+            return None
         template = template[::-1]
         overlap = 0
         res = None
@@ -397,7 +408,7 @@ class SelfStudy:
 
         return None
     
-    def getDiagonalLROfTemplate(self, template, number, field, x, y):
+    def getDiagonalDownUp(self, template, number, field, x, y):
         """Возвращает координаты . из шаблона. Поиск по горизонтали."""
 
         need_overlap = template.count("X")
@@ -406,30 +417,32 @@ class SelfStudy:
         overlap = 0
         res = None
         for i in range(len(template)):
-            if template[i] == "X" and field[x + i][y + i] == number:
+            if template[i] == "X" and field[x - i][y + i] == number:
                 overlap += 1
-            elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
-                res = {"X": x + i, "Y": y + i}
+            elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
+                res = {"X": x - i, "Y": y + i}
 
         if overlap == need_overlap and res != None:
             return res
 
         # Поиск в инвертированной строке
+        if template == template[::1]:
+            return None
         template = template[::-1]
         overlap = 0
         res = None
         for i in range(len(template)):
-            if template[i] == "X" and field[x + i][y + i] == number:
+            if template[i] == "X" and field[x - i][y + i] == number:
                 overlap += 1
-            elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
-                res = {"X": x + i, "Y": y + i}
+            elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
+                res = {"X": x - i, "Y": y + i}
 
         if overlap == need_overlap and res != None:
             return res
 
         return None
     
-    def getDiagonalRLOfTemplate(self, template, number, field, x, y):
+    def getDiagonalUpDown(self, template, number, field, x, y):
         """Возвращает координаты . из шаблона. Поиск по горизонтали."""
 
         need_overlap = template.count("X")
@@ -438,23 +451,25 @@ class SelfStudy:
         overlap = 0
         res = None
         for i in range(len(template)):
-            if template[i] == "X" and field[x - i][y + i] == number:
+            if template[i] == "X" and field[x + i][y + i] == number:
                 overlap += 1
-            elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
-                res = {"X": x - i, "Y": y + i}
+            elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
+                res = {"X": x + i, "Y": y + i}
 
         if overlap == need_overlap and res != None:
             return res
 
         # Поиск в инвертированной строке
+        if template == template[::1]:
+            return None
         template = template[::-1]
         overlap = 0
         res = None
         for i in range(len(template)):
-            if template[i] == "X" and field[x - i][y + i] == number:
+            if template[i] == "X" and field[x + i][y + i] == number:
                 overlap += 1
-            elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
-                res = {"X": x - i, "Y": y + i}
+            elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
+                res = {"X": x + i, "Y": y + i}
 
         if overlap == need_overlap and res != None:
             return res
