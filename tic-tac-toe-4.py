@@ -73,8 +73,10 @@ class Game:
                 self.__main_state = MainState.DRAW_GAME
             elif self.__main_state == MainState.DRAW_GAME:
                 # Клавиатура + расчёты
-                self.playGame = self.__tic_tac_toe.controller(pygame, self.__delta)
-                self.playGame *= self.__tic_tac_toe.act(pygame, self.__delta)
+                res = self.__tic_tac_toe.controller(pygame, self.__delta)
+                res *= self.__tic_tac_toe.act(pygame, self.__delta)
+                if not res:
+                    self.__main_state = MainState.VIEW_MENU
 
             # Delta-time для коррекции анимации
             self.__delta = self.clock.tick(self.setup.FPS) / 1000

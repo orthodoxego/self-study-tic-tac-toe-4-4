@@ -41,7 +41,7 @@ class GameMenu:
                                     200, self.setup.screen_width // 1.5, 60))
 
 
-        self.__menu.append(MenuData("Прекратить безобразие!", self.setup.screen_width // 4, 550, self.setup.screen_width // 1.5, 60))
+        self.__menu.append(MenuData("Прекратить вакханалию...", self.setup.screen_width // 4, 550, self.setup.screen_width // 1.5, 60))
 
 
         self.__select_item = -1

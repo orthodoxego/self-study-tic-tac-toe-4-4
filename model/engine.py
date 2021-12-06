@@ -106,6 +106,7 @@ class TicTacEngine:
 
         if not result_controller:
             self.study.saveDataAll(end=True)
+            pygame.mouse.set_visible(False)
 
         return result_controller
 
