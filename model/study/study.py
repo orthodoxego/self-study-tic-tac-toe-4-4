@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class TemplateInfo:
     template: str = "нет шаблона."
     chars: str = "нет строки."
+    count: int = 0
 
 class Study:
     """Организация записи ходов и анализа текущего хода."""
@@ -14,6 +15,7 @@ class Study:
         self.setup = setup
         self.file = setup.dataset_file_name
 
+        self.info_template = TemplateInfo()
         self.dataset = self.readDataAll()
         self.workspace = []
         self.initialize()
@@ -21,8 +23,6 @@ class Study:
         self.digit = ""
         for i in range(65, 65 + setup.board_lenght ** 2):
             self.digit += chr(i)
-
-        self.info_template = TemplateInfo()
 
     def log(self, s):
         print(s)
@@ -33,6 +33,7 @@ class Study:
         self.__current_game = ""
         self.workspace.clear()
         self.workspace = self.dataset[:]
+        self.info_template.count = len(self.workspace)
 
     def readDataAll(self):
         result = []
@@ -45,6 +46,8 @@ class Study:
         except:
             f = open(self.file, "w", encoding="UTF-8")
             f.close()
+
+        self.info_template.count = len(result)
         return result
 
     def saveDataAll(self):
@@ -110,12 +113,15 @@ class Study:
         worker_dataset = None
         if len(wins_move) > 0:
             worker_dataset = choice(wins_move)
-            self.log(f"Шаблон, победа: {worker_dataset}")
+            self.info_template.chars = f"{worker_dataset}"
+            self.info_template.template = "Победа"
         elif len(draw_move) != 0 and figure_win == self.setup.figure02:
             worker_dataset = choice(draw_move)
-            self.log(f"Шаблон, ничья: {worker_dataset}")
+            self.info_template.chars = f"{worker_dataset}"
+            self.info_template.template = "Ничья"
         else:
-            print("Без шаблона")
+            self.info_template.chars = f"-"
+            self.info_template.template = "Нет шаблона"
 
         if len(current_string) <= 1 and randint(0, 100) < 90:
             xT = self.setup.board_lenght // 2

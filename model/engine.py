@@ -137,7 +137,7 @@ class TicTacEngine:
 
         self.__view.draw_texture(scene, 10, self.setup.screen_height - 120,
                                  self.__text.getSystemText("TEMPL_SHABL",
-                                                           f"Шаблон: {self.study.info_template.template}",
+                                                           f"Шаблон ({self.study.info_template.count}): {self.study.info_template.template}",
                                                            self.setup.GRAY))
 
         self.__view.draw_texture(scene, 10, self.setup.screen_height - 100,
@@ -304,7 +304,7 @@ class TicTacEngine:
         else:
             segment = None
             if self.__game_state == GameState.PLAYER:
-                segment = self.study.getSegment(self.setup.figure02, self.__datamodel.field)
+                segment = self.study.getSegment(self.setup.figure01, self.__datamodel.field)
                 x = segment["X"]
                 y = segment["Y"]
                 self.__datamodel.field[x][y] = self.setup.figure01

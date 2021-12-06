@@ -17,11 +17,11 @@ class Setup(metaclass=Single):
         #  1 - бот с человеком (бот ходит первым)
         # 10 - человек с ботом
         # 11 - человек-человек
-        self.config_game = 0
+        self.config_game = 10
 
         # Пауза между раундами
         # 0 - ждать щелчка ЛКМ
-        self.pause_round = 2
+        self.pause_round = 1
 
         # Ширина и высота окна для оконного режима
         self._screen_width = 1024
@@ -53,7 +53,7 @@ class Setup(metaclass=Single):
             name = str(self.board_lenght)
         self.dataset_file_name = f"dataset{name}.dat"
         # Записывать ли новые решения в файл датасета
-        self.saveData = False
+        self.saveData = True
 
         # Цвета
         self.BLACK = (0, 0, 0)
