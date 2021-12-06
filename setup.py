@@ -17,7 +17,7 @@ class Setup(metaclass=Single):
         #  1 - бот с человеком (бот ходит первым)
         # 10 - человек с ботом
         # 11 - человек-человек
-        self.config_game = 10
+        self.config_game = 0
 
         # Пауза между раундами
         # 0 - ждать щелчка ЛКМ
@@ -57,6 +57,7 @@ class Setup(metaclass=Single):
 
         # Цвета
         self.BLACK = (0, 0, 0)
+        self.GRAY = (120, 120, 120)
         self.WHITE = (255, 255, 255)
         self.RED = (255, 0, 0)
         self.GREEN = (0, 255, 0)

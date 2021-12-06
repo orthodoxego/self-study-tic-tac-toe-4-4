@@ -5,8 +5,8 @@ class Font:
     """Генерирует поверхности с текстом для вывода на экран."""
     def __init__(self):
         """Определяет шрифты."""
-        self.__font_system = pygame.font.Font("font\\roboto-regular.ttf", 18)
-        self.__font_big = pygame.font.Font("font\\roboto-regular.ttf", 36)
+        self.__font_system = pygame.font.Font("font\\roboto-regular.ttf", 16)
+        self.__font_big = pygame.font.Font("font\\roboto-regular.ttf", 30)
         self.__texts = {}
         self.__surfaces = {}
 

@@ -1,6 +1,12 @@
 from random import choice, randint
+from dataclasses import dataclass
 
-class SelfStudy:
+@dataclass
+class TemplateInfo:
+    template: str = "нет шаблона."
+    chars: str = "нет строки."
+
+class Study:
     """Организация записи ходов и анализа текущего хода."""
 
     def __init__(self, field, setup):
@@ -15,6 +21,8 @@ class SelfStudy:
         self.digit = ""
         for i in range(65, 65 + setup.board_lenght ** 2):
             self.digit += chr(i)
+
+        self.info_template = TemplateInfo()
 
     def log(self, s):
         print(s)
@@ -100,10 +108,14 @@ class SelfStudy:
                     lose_move.append(data_set)
 
         worker_dataset = None
-        # if len(wins_move) > 0:
-        #    worker_dataset = choice(wins_move)
-        # elif len(draw_move) != 0:
-        #     worker_dataset = choice(draw_move)
+        if len(wins_move) > 0:
+            worker_dataset = choice(wins_move)
+            self.log(f"Шаблон, победа: {worker_dataset}")
+        elif len(draw_move) != 0 and figure_win == self.setup.figure02:
+            worker_dataset = choice(draw_move)
+            self.log(f"Шаблон, ничья: {worker_dataset}")
+        else:
+            print("Без шаблона")
 
         if len(current_string) <= 1 and randint(0, 100) < 90:
             xT = self.setup.board_lenght // 2
@@ -142,24 +154,23 @@ class SelfStudy:
 
     def getSegment(self, figure, field):
         """Вернёт случайную свободную позицию рядом с существующей клеткой."""
-        self.log("GetSegment")
         ret = {"X": -1, "Y": -1}
         choice_cells = []
         for x in range(len(field)):
             for y in range(len(field[x])):
                 if field[x][y] == figure:
-                    if x - 1 >= 0:
-                        if field[x - 1][y] == self.setup.clear_field:
-                            choice_cells.append([x - 1, y])
-                    if x + 1 < self.setup.board_lenght:
-                        if field[x + 1][y] == self.setup.clear_field:
-                            choice_cells.append([x + 1, y])
-                    if y + 1 < self.setup.board_lenght:
-                        if field[x][y + 1] == self.setup.clear_field:
-                            choice_cells.append([x, y + 1])
-                    if y - 1 >= 0:
-                        if field[x][y - 1] == self.setup.clear_field:
-                            choice_cells.append([x, y - 1])
+                    # if x - 1 >= 0:
+                    #     if field[x - 1][y] == self.setup.clear_field:
+                    #         choice_cells.append([x - 1, y])
+                    # if x + 1 < self.setup.board_lenght:
+                    #     if field[x + 1][y] == self.setup.clear_field:
+                    #         choice_cells.append([x + 1, y])
+                    # if y + 1 < self.setup.board_lenght:
+                    #     if field[x][y + 1] == self.setup.clear_field:
+                    #         choice_cells.append([x, y + 1])
+                    # if y - 1 >= 0:
+                    #     if field[x][y - 1] == self.setup.clear_field:
+                    #         choice_cells.append([x, y - 1])
                     if x + 1 < self.setup.board_lenght and y + 1 < self.setup.board_lenght:
                         if field[x + 1][y + 1] == self.setup.clear_field:
                             choice_cells.append([x + 1, y + 1])
@@ -267,73 +278,73 @@ class SelfStudy:
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate("X.X.", figure, field, x, y)
+                result = self.getHorizontalOfTemplate("X.Xb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate("X.X.", figure, field, x, y)
+                result = self.getVerticalOfTemplate("X.Xb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(self.setup.win_lenght - 1, len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp("X.X.", figure, field, x, y)
+                result = self.getDiagonalDownUp("X.Xb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown("X.X.", figure, field, x, y)
+                result = self.getDiagonalUpDown("X.Xb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate(".XX.", figure, field, x, y)
+                result = self.getHorizontalOfTemplate(".XXb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate(".XX.", figure, field, x, y)
+                result = self.getVerticalOfTemplate(".XXb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(self.setup.win_lenght - 1, len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp(".XX.", figure, field, x, y)
+                result = self.getDiagonalDownUp(".XXb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown(".XX.", figure, field, x, y)
+                result = self.getDiagonalUpDown(".XXb", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x])):
-                result = self.getHorizontalOfTemplate("XX..", figure, field, x, y)
+                result = self.getHorizontalOfTemplate("XX.b", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getVerticalOfTemplate("XX..", figure, field, x, y)
+                result = self.getVerticalOfTemplate("XX.b", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(self.setup.win_lenght - 1, len(field)):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalDownUp("XX..", figure, field, x, y)
+                result = self.getDiagonalDownUp("XX.b", figure, field, x, y)
                 if result != None:
                     return result
 
         for x in range(len(field) - self.setup.win_lenght + 1):
             for y in range(len(field[x]) - self.setup.win_lenght + 1):
-                result = self.getDiagonalUpDown("XX..", figure, field, x, y)
+                result = self.getDiagonalUpDown("XX.b", figure, field, x, y)
                 if result != None:
                     return result
 
@@ -352,6 +363,8 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x + i][y] == self.setup.clear_field:
                 res = {"X": x + i, "Y": y}
+            elif template[i] == "b" and field[x + i][y] != self.setup.clear_field:
+                overlap += 1
 
         if overlap == need_overlap and res != None:
             return res
@@ -368,6 +381,8 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x + i][y] == self.setup.clear_field:
                 res = {"X": x + i, "Y": y}
+            elif template[i] == "b" and field[x + i][y] != self.setup.clear_field:
+                overlap += 1
 
         if overlap == need_overlap and res != None:
             return res
@@ -387,6 +402,8 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x][y + i] == self.setup.clear_field:
                 res = {"X": x, "Y": y + i}
+            elif template[i] == "b" and field[x][y + i] != self.setup.clear_field:
+                overlap += 1
 
         if overlap == need_overlap and res != None:
             return res
@@ -402,6 +419,8 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x][y + i] == self.setup.clear_field:
                 res = {"X": x, "Y": y + i}
+            elif template[i] == "b" and field[x][y + i] != self.setup.clear_field:
+                overlap += 1
 
         if overlap == need_overlap and res != None:
             return res
@@ -421,6 +440,8 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
                 res = {"X": x - i, "Y": y + i}
+            elif template[i] == "b" and field[x - i][y + i] != self.setup.clear_field:
+                overlap += 1
 
         if overlap == need_overlap and res != None:
             return res
@@ -436,6 +457,9 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x - i][y + i] == self.setup.clear_field:
                 res = {"X": x - i, "Y": y + i}
+            elif template[i] == "b" and field[x - i][y + i] != self.setup.clear_field:
+                overlap += 1
+
 
         if overlap == need_overlap and res != None:
             return res
@@ -455,6 +479,9 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
                 res = {"X": x + i, "Y": y + i}
+            elif template[i] == "b" and field[x + i][y + i] != self.setup.clear_field:
+                overlap += 1
+
 
         if overlap == need_overlap and res != None:
             return res
@@ -470,6 +497,8 @@ class SelfStudy:
                 overlap += 1
             elif template[i] == "." and field[x + i][y + i] == self.setup.clear_field:
                 res = {"X": x + i, "Y": y + i}
+            elif template[i] == "b" and field[x + i][y + i] != self.setup.clear_field:
+                overlap += 1
 
         if overlap == need_overlap and res != None:
             return res

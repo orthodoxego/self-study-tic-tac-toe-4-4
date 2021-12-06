@@ -6,7 +6,7 @@ from controller.controller import ControllerGame
 from model.services.playermove import PlayerMove
 from model.services.gamestate import GameState
 from model.services.services import Services
-from model.study.selfstudy import SelfStudy
+from model.study.study import Study
 from setup import Setup
 from model.datamodel import DataModel
 from view.textures import Textures
@@ -32,7 +32,7 @@ class TicTacEngine:
         self.default_state = GameState.PLAYER
 
         # Класс-обучалка
-        self.study = SelfStudy(self.__datamodel.field, self.setup)
+        self.study = Study(self.__datamodel.field, self.setup)
 
         # Объекты-обработчики действий игрока
         self.__player_move = PlayerMove()
@@ -135,6 +135,16 @@ class TicTacEngine:
                                                            f"Ничья: {self.__count_win_player_and_bot[2]}",
                                                            self.setup.YELLOW))
 
+        self.__view.draw_texture(scene, 10, self.setup.screen_height - 120,
+                                 self.__text.getSystemText("TEMPL_SHABL",
+                                                           f"Шаблон: {self.study.info_template.template}",
+                                                           self.setup.GRAY))
+
+        self.__view.draw_texture(scene, 10, self.setup.screen_height - 100,
+                                 self.__text.getSystemText("TEMPL_CHARS",
+                                                           f"Последовательность: {self.study.info_template.chars}",
+                                                           self.setup.GRAY))
+
         if not self.setup.saveData:
             self.__view.draw_texture(scene, 10, self.setup.screen_height - 30,
                                      self.__text.getSystemText("SAVEDATA",
@@ -155,7 +165,7 @@ class TicTacEngine:
             self.__view.draw_texture(scene, self.setup.screen_width // 2.3, self.setup.screen_height - 30,
                                      self.__text.getSystemText("LEARN",
                                                                "В setup.py значение self.config_game = 10, чтобы сыграть с ботом",
-                                                               self.setup.YELLOW))
+                                                               self.setup.GRAY))
 
 
     def draw(self, scene, clock):
@@ -274,7 +284,7 @@ class TicTacEngine:
                                             f"Новый раунд... {1 + (self.setup.pause_round * self.setup.FPS - self.__count_frame) // 60}",
                                             self.setup.YELLOW)
             self.__view.draw_texture(scene, (self.setup.screen_width - txt.get_width()) // 2,
-                                     self.setup.screen_height - txt.get_height() * 2, txt)
+                                     self.setup.screen_height - txt.get_height() * 3, txt)
 
     def runBotMove(self):
         next_move = {"X": -1, "Y": -1, "DATA": self.setup.figure01}
