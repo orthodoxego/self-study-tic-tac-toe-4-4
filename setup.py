@@ -55,6 +55,9 @@ class Setup(metaclass=Single):
         # Записывать ли новые решения в файл датасета
         self.saveData = True
 
+        # Бот пользуется датасетом
+        self.learn_bot = True
+
         # Цвета
         self.BLACK = (0, 0, 0)
         self.GRAY = (120, 120, 120)

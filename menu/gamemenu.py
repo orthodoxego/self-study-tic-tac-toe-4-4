@@ -35,7 +35,13 @@ class GameMenu:
             if self.setup.pause_round == self.__pause_round_game[i][1]:
                 self.__pause_round_game_number = i
 
-        self.__save_dataset = [["игнорировать", False], ["записывать", True]]
+        self.__save_dataset = [["игнорировать", False], ["записывать в датасет", True]]
+        self.__save_dataset_number = self.setup.saveData
+
+        self.__learn_bot = [["игнорят (глупее)", False], ["пользуются (умнее)", True]]
+        self.__learn_bot_number = self.setup.learn_bot
+
+        self.__save_dataset = [["игнорировать", False], ["записывать в датасет", True]]
         self.__save_dataset_number = self.setup.saveData
 
         self.__fps = [30, 60, 120, 180, 240, 300]
@@ -60,13 +66,18 @@ class GameMenu:
         self.__menu.append(MenuData("Пауза между раундами: " + self.__pause_round_game[self.__pause_round_game_number][0],
                                     left_border,
                                     250, width_menu, 60))
-        self.__menu.append(MenuData("Новые комбинации датасета: " + self.__save_dataset[self.__save_dataset_number][0],
+        self.__menu.append(MenuData("Новые комбинации: " + self.__save_dataset[self.__save_dataset_number][0],
                      left_border,
                      300, width_menu, 60))
 
-        self.__menu.append(MenuData("Стремиться к FPS: " + str(self.__fps[self.__fps_number]),
+        self.__menu.append(MenuData("Боты и датасет: " + str(self.__learn_bot[self.__learn_bot_number][0]),
                                     left_border,
                                     350, width_menu, 60))
+
+        self.__menu.append(MenuData("Стремиться к FPS: " + str(self.__fps[self.__fps_number]),
+                                    left_border,
+                                    400, width_menu, 60))
+
 
 
         self.__menu.append(MenuData("Прекратить вакханалию...",
@@ -153,12 +164,20 @@ class GameMenu:
             self.__save_dataset_number += 1
             if self.__save_dataset_number >= len(self.__save_dataset):
                 self.__save_dataset_number = 0
-            self.__menu[self.__select_item].text = "Новые комбинации датасета: " + \
+            self.__menu[self.__select_item].text = "Новые комбинации: " + \
                                                    self.__save_dataset[self.__save_dataset_number][0]
             self.setup.saveData = self.__save_dataset[self.__save_dataset_number][1]
 
-        # ФПС
+        # Использование датасета
         elif self.__select_item == 5:
+            self.__learn_bot_number += 1
+            if self.__learn_bot_number >= len(self.__learn_bot):
+                self.__learn_bot_number = 0
+            self.__menu[self.__select_item].text = "Боты и датасет: " + str(self.__learn_bot[self.__learn_bot_number][0])
+            self.setup.learn_bot = self.__learn_bot[self.__learn_bot_number][1]
+
+        # ФПС
+        elif self.__select_item == 6:
             self.__fps_number += 1
             if self.__fps_number >= len(self.__fps):
                 self.__fps_number = 0

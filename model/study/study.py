@@ -101,29 +101,30 @@ class Study:
         lose_move = []
         current_string = self.__current_game
 
-        for data_set in self.workspace:
-            if len(current_string) != 0:
-                if current_string == data_set[0:len(current_string)]:
+        if self.setup.learn_bot:
+            for data_set in self.workspace:
+                if len(current_string) != 0:
+                    if current_string == data_set[0:len(current_string)]:
+                        if data_set[-1] == str(figure_win):
+                            wins_move.append(data_set)
+                        elif data_set[-1] == str(self.setup.clear_field):
+                            draw_move.append(data_set)
+                        elif data_set[-1] == str(figure_lose):
+                            lose_move.append(data_set)
+                else:
                     if data_set[-1] == str(figure_win):
                         wins_move.append(data_set)
                     elif data_set[-1] == str(self.setup.clear_field):
                         draw_move.append(data_set)
                     elif data_set[-1] == str(figure_lose):
                         lose_move.append(data_set)
-            else:
-                if data_set[-1] == str(figure_win):
-                    wins_move.append(data_set)
-                elif data_set[-1] == str(self.setup.clear_field):
-                    draw_move.append(data_set)
-                elif data_set[-1] == str(figure_lose):
-                    lose_move.append(data_set)
 
         worker_dataset = None
         if len(wins_move) > 0:
             worker_dataset = choice(wins_move)
             self.info_template.chars = f"{worker_dataset}"
             self.info_template.template = "Победа"
-        elif False and len(draw_move) != 0:
+        elif len(draw_move) > 0:
             worker_dataset = choice(draw_move)
             self.info_template.chars = f"{worker_dataset}"
             self.info_template.template = "Ничья"

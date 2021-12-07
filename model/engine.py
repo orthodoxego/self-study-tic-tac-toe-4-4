@@ -135,16 +135,6 @@ class TicTacEngine:
                                                            f"Ничья: {self.__count_win_player_and_bot[2]}",
                                                            self.setup.YELLOW))
 
-        self.__view.draw_texture(scene, 10, self.setup.screen_height - 120,
-                                 self.__text.getSystemText("TEMPL_SHABL",
-                                                           f"Шаблон ({self.study.info_template.count}): {self.study.info_template.template}",
-                                                           self.setup.GRAY))
-
-        self.__view.draw_texture(scene, 10, self.setup.screen_height - 100,
-                                 self.__text.getSystemText("TEMPL_CHARS",
-                                                           f"Последовательность: {self.study.info_template.chars}",
-                                                           self.setup.GRAY))
-
         if not self.setup.saveData:
             self.__view.draw_texture(scene, 10, self.setup.screen_height - 30,
                                      self.__text.getSystemText("SAVEDATA",
@@ -156,12 +146,22 @@ class TicTacEngine:
                                                                "Запись датасета: ВКЛ.",
                                                                self.setup.GREEN))
 
-        if self.setup.config_game == 0:
-
+        if self.setup.config_game < 11 and self.setup.learn_bot:
             self.__view.draw_texture(scene, 10, self.setup.screen_height - 50,
-                                     self.__text.getSystemText("LEARN",
-                                                               "Обучение ботов: ВКЛ.",
+                                     self.__text.getSystemText("LEARN_BOT",
+                                                               "Использование датасета: ВКЛ.",
                                                                self.setup.GREEN))
+            self.__view.draw_texture(scene, 10, self.setup.screen_height - 120,
+                                     self.__text.getSystemText("TEMPL_SHABL",
+                                                               f"Шаблон ({self.study.info_template.count}): {self.study.info_template.template}",
+                                                               self.setup.GRAY))
+
+            self.__view.draw_texture(scene, 10, self.setup.screen_height - 100,
+                                     self.__text.getSystemText("TEMPL_CHARS",
+                                                               f"Последовательность: {self.study.info_template.chars}",
+                                                               self.setup.GRAY))
+
+        if self.setup.config_game == 0:
             self.__view.draw_texture(scene, self.setup.screen_width // 2.3, self.setup.screen_height - 30,
                                      self.__text.getSystemText("LEARN",
                                                                "В setup.py значение self.config_game = 10, чтобы сыграть с ботом",
