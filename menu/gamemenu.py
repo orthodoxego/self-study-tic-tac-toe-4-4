@@ -62,33 +62,33 @@ class GameMenu:
                                     width_menu, 60))
         self.__menu.append(MenuData("Тип игры: " + self.__type_game[self.__type_game_number][0],
                                     left_border,
-                                    150, width_menu, 60))
+                                    200, width_menu, 60))
         self.__menu.append(MenuData("Размер поля: " + self.__size_game[self.__size_game_number][0],
                                     left_border,
-                                    200, width_menu, 60))
+                                    250, width_menu, 60))
         self.__menu.append(MenuData("Пауза между раундами: " + self.__pause_round_game[self.__pause_round_game_number][0],
                                     left_border,
-                                    250, width_menu, 60))
+                                    300, width_menu, 60))
         self.__menu.append(MenuData("Новые комбинации: " + self.__save_dataset[self.__save_dataset_number][0],
-                     left_border,
-                     300, width_menu, 60))
-
-        self.__menu.append(MenuData("Боты и датасет: " + str(self.__learn_bot[self.__learn_bot_number][0]),
                                     left_border,
                                     350, width_menu, 60))
 
-        self.__menu.append(MenuData("Включать комбинации с \"ничьей\": " + str(self.__draw_bot[self.__draw_bot_number][0]),
+        self.__menu.append(MenuData("Боты и датасет: " + str(self.__learn_bot[self.__learn_bot_number][0]),
                                     left_border,
                                     400, width_menu, 60))
 
-        self.__menu.append(MenuData("Стремиться к FPS: " + str(self.__fps[self.__fps_number]),
+        self.__menu.append(MenuData("Включать комбинации с \"ничьей\": " + str(self.__draw_bot[self.__draw_bot_number][0]),
                                     left_border,
                                     450, width_menu, 60))
 
+        self.__menu.append(MenuData("Стремиться к FPS: " + str(self.__fps[self.__fps_number]),
+                                    left_border,
+                                    500, width_menu, 60))
 
 
         self.__menu.append(MenuData("Прекратить вакханалию...",
-                                    left_border, 550,
+                                    left_border,
+                                    600,
                                     width_menu, 60))
 
 
@@ -120,6 +120,8 @@ class GameMenu:
         if self.__select_item >= 0:
             mnu = self.__menu[self.__select_item]
             pygame.draw.rect(scene, self.setup.ULTRAMARINE, (mnu.x - mnu.width // 10, mnu.y - mnu.heigth // 5, mnu.width, mnu.heigth))
+            pygame.draw.rect(scene, self.setup.LIGHT_BLUE, (mnu.x - mnu.width // 10, mnu.y - mnu.heigth // 5, mnu.width, mnu.heigth), 1)
+            pygame.draw.rect(scene, self.setup.BLUE, (mnu.x - mnu.width // 10 + 3, mnu.y - mnu.heigth // 5 + 3, mnu.width - 6, mnu.heigth - 6), 1)
 
         for i in range(len(self.__menu)):
             if i == 0:
@@ -131,8 +133,15 @@ class GameMenu:
                 scene.blit(self.__font.getBigText("MENU" + str(i), self.__menu[i].text, self.setup.GRAY),
                            (self.__menu[i].x, self.__menu[i].y))
 
-        scene.blit(self.__cursor, (
-        self.__controller.mouse_x - self.__correct_cursor_x, self.__controller.mouse_y - self.__correct_cursor_y))
+
+        if self.__select_item > 0 and self.__select_item < len(self.__menu) - 1:
+            scene.blit(self.__font.getBigText("MENU" + str(i), self.__menu[self.__select_item].text, self.setup.LIGHT_BLUE),
+                       (self.__menu[self.__select_item].x, self.__menu[self.__select_item].y))
+
+
+
+        scene.blit(self.__cursor, (self.__controller.mouse_x - self.__correct_cursor_x,
+                                   self.__controller.mouse_y - self.__correct_cursor_y))
 
     def menuReaction(self):
         # Проверяет реакцию на пункты меню
