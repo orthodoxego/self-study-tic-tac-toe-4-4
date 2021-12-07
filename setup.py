@@ -17,15 +17,15 @@ class Setup(metaclass=Single):
         #  1 - бот с человеком (бот ходит первым)
         # 10 - человек с ботом
         # 11 - человек-человек
-        self.config_game = 11
+        self.config_game = 1
 
         # Пауза между раундами
         # 0 - ждать щелчка ЛКМ
-        self.pause_round = 1.00
+        self.pause_round = 1
 
         # Пауза между ходами. 0 - ждать щелчка ЛКМ
         # Если, например, значение 0.5 - то пауза в 0.5 секунды
-        self.wait_for_move = 0.005
+        self.wait_for_move = 0.001
 
         # Ширина и высота окна для оконного режима
         self._screen_width = 1024
@@ -91,6 +91,10 @@ class Setup(metaclass=Single):
             self.__board_lenght = 4
         return self.__board_lenght
 
+    @board_lenght.setter
+    def board_lenght(self, value):
+        self.__board_lenght = value
+
     @property
     def win_lenght(self):
         if self.__win_lenght < 4:
@@ -100,6 +104,11 @@ class Setup(metaclass=Single):
 
 
     def setStartPoint(self):
+        if self.__board_lenght < 10:
+            name = "0" + str(self.board_lenght)
+        else:
+            name = str(self.board_lenght)
+        self.dataset_file_name = f"dataset{name}.dat"
         self.start_point_x, self.start_point_y = self.getStartPoint()
 
     def getStartPoint(self):
