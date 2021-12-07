@@ -125,9 +125,10 @@ class Study:
             self.info_template.chars = f"{worker_dataset}"
             self.info_template.template = "Победа"
         elif len(draw_move) > 0:
-            worker_dataset = choice(draw_move)
-            self.info_template.chars = f"{worker_dataset}"
-            self.info_template.template = "Ничья"
+            if self.setup.draw_game:
+                worker_dataset = choice(draw_move)
+                self.info_template.chars = f"{worker_dataset}"
+                self.info_template.template = "Ничья"
         else:
             self.info_template.chars = f"-"
             self.info_template.template = "Нет шаблона"

@@ -41,6 +41,9 @@ class GameMenu:
         self.__learn_bot = [["игнорят (глупее)", False], ["пользуются (умнее)", True]]
         self.__learn_bot_number = self.setup.learn_bot
 
+        self.__draw_bot = [["нет", False], ["да", True]]
+        self.__draw_bot_number = self.setup.draw_game
+
         self.__save_dataset = [["игнорировать", False], ["записывать в датасет", True]]
         self.__save_dataset_number = self.setup.saveData
 
@@ -74,9 +77,13 @@ class GameMenu:
                                     left_border,
                                     350, width_menu, 60))
 
-        self.__menu.append(MenuData("Стремиться к FPS: " + str(self.__fps[self.__fps_number]),
+        self.__menu.append(MenuData("Включать комбинации с \"ничьей\": " + str(self.__draw_bot[self.__draw_bot_number][0]),
                                     left_border,
                                     400, width_menu, 60))
+
+        self.__menu.append(MenuData("Стремиться к FPS: " + str(self.__fps[self.__fps_number]),
+                                    left_border,
+                                    450, width_menu, 60))
 
 
 
@@ -176,8 +183,17 @@ class GameMenu:
             self.__menu[self.__select_item].text = "Боты и датасет: " + str(self.__learn_bot[self.__learn_bot_number][0])
             self.setup.learn_bot = self.__learn_bot[self.__learn_bot_number][1]
 
+        # Комбинации с ничьей
+        elif self.__select_item == 6 and self.__learn_bot[self.__learn_bot_number][1]:
+            self.__draw_bot_number += 1
+            if self.__draw_bot_number >= len(self.__draw_bot):
+                self.__draw_bot_number = 0
+            self.__menu[self.__select_item].text = "Включать комбинации с \"ничьей\": " + str(self.__draw_bot[self.__draw_bot_number][0])
+            self.setup.draw_game = self.__draw_bot[self.__draw_bot_number][1]
+
+
         # ФПС
-        elif self.__select_item == 6:
+        elif self.__select_item == 7:
             self.__fps_number += 1
             if self.__fps_number >= len(self.__fps):
                 self.__fps_number = 0

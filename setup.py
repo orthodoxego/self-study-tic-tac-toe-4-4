@@ -57,6 +57,8 @@ class Setup(metaclass=Single):
 
         # Бот пользуется датасетом
         self.learn_bot = True
+        # Включать ли последовательности с ничьей
+        self.draw_game = False
 
         # Цвета
         self.BLACK = (0, 0, 0)
