@@ -15,6 +15,8 @@ class Study:
         self.setup = setup
         self.file = setup.dataset_file_name
 
+        self.__old_count_dataset = 0
+
         self.info_template = TemplateInfo()
         self.dataset = self.readDataAll()
         self.workspace = []
@@ -53,7 +55,7 @@ class Study:
         return result
 
     def saveDataAll(self, end=False):
-        if not self.setup.saveData:
+        if not self.setup.save_data:
             return False
 
         if self.__current_game != "":
@@ -62,6 +64,7 @@ class Study:
                 if not (self.__current_game in self.dataset):
                     self.saved_dump.insert(0, self.__current_game)
                     self.dataset.insert(0, self.__current_game)
+                    self.__old_count_dataset += 1
 
         if len(self.saved_dump) > 50 or end:
             try:
@@ -69,8 +72,9 @@ class Study:
                 for i in range(len(self.dataset)):
                     f.write(self.dataset[i] + "\n")
                 f.close()
-                print("Дамп датасета выгружен.")
+                print(f"Дамп датасета выгружен ({len(self.dataset)} записей) / Новых: ({self.__old_count_dataset})")
                 self.saved_dump.clear()
+                self.__old_count_dataset = 0
                 return True
             except:
                 print("Невозможно сохранить файл.")

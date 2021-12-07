@@ -135,7 +135,7 @@ class TicTacEngine:
                                                            f"Ничья: {self.__count_win_player_and_bot[2]}",
                                                            self.setup.YELLOW))
 
-        if not self.setup.saveData:
+        if not self.setup.save_data:
             self.__view.draw_texture(scene, 10, self.setup.screen_height - 30,
                                      self.__text.getSystemText("SAVEDATA",
                                                                "Запись датасета: ВЫКЛ.",

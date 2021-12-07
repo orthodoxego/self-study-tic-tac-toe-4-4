@@ -53,7 +53,7 @@ class Setup(metaclass=Single):
             name = str(self.board_lenght)
         self.dataset_file_name = f"dataset{name}.dat"
         # Записывать ли новые решения в файл датасета
-        self.saveData = True
+        self.save_data = True
 
         # Бот пользуется датасетом
         self.learn_bot = True
@@ -71,6 +71,8 @@ class Setup(metaclass=Single):
         self.LIGHT_RED = (252, 175, 218)
         self.YELLOW = (255, 255, 0)
         self.ULTRAMARINE = (18, 10, 143)
+
+        self.loadSettings()
 
     @property
     def screen_width(self):
@@ -125,3 +127,45 @@ class Setup(metaclass=Single):
         """Размер одной клетки = размер png файла."""
         return 64
 
+    def saveSettings(self):
+        try:
+            f = open("setup.dat", "w", encoding="UTF-8")
+            f.write(f"config_game={self.config_game}\n")
+            f.write(f"board_lenght={self.board_lenght}\n")
+            f.write(f"pause_round={self.pause_round}\n")
+            f.write(f"save_data={self.save_data}\n")
+            f.write(f"learn_bot={self.learn_bot}\n")
+            f.write(f"draw_game={self.draw_game}\n")
+            f.write(f"FPS={self.FPS}\n")
+            f.close()
+        except:
+            return False
+        return True
+
+    def loadSettings(self):
+        try:
+            f = open("setup.dat", "r", encoding="UTF-8")
+            r = f.readlines()
+            f.close()
+            for line in r:
+                line = line.replace("\n", "")
+                line = line.split("=")
+                if line[0] == "config_game":
+                    self.config_game = int(line[1])
+                elif line[0] == "board_lenght":
+                    self.board_lenght = int(line[1])
+                    self.setStartPoint()
+                elif line[0] == "pause_round":
+                    self.pause_round = float(line[1])
+                elif line[0] == "save_data":
+                    self.save_data = True if line[1] == "True" else False
+                elif line[0] == "learn_bot":
+                    self.learn_bot = True if line[1] == "True" else False
+                elif line[0] == "draw_game":
+                    self.draw_game = True if line[1] == "True" else False
+                elif line[0] == "FPS":
+                    self.FPS = int(line[1])
+        except:
+            self.saveSettings()
+            return False
+        return True

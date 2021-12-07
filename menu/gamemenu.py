@@ -36,7 +36,7 @@ class GameMenu:
                 self.__pause_round_game_number = i
 
         self.__save_dataset = [["игнорировать", False], ["записывать в датасет", True]]
-        self.__save_dataset_number = self.setup.saveData
+        self.__save_dataset_number = self.setup.save_data
 
         self.__learn_bot = [["игнорят (глупее)", False], ["пользуются (умнее)", True]]
         self.__learn_bot_number = self.setup.learn_bot
@@ -45,7 +45,7 @@ class GameMenu:
         self.__draw_bot_number = self.setup.draw_game
 
         self.__save_dataset = [["игнорировать", False], ["записывать в датасет", True]]
-        self.__save_dataset_number = self.setup.saveData
+        self.__save_dataset_number = self.setup.save_data
 
         self.__fps = [30, 60, 120, 180, 240, 300]
         self.__fps_number = 0
@@ -100,8 +100,9 @@ class GameMenu:
         if ret == 100:
             ret = self.menuReaction()
 
-        if ret == 10:
+        if ret == 10 or ret == 27:
             pygame.mouse.set_visible(True)
+            self.setup.saveSettings()
 
         mx = self.__controller.mouse_x
         my = self.__controller.mouse_y
@@ -182,7 +183,7 @@ class GameMenu:
                 self.__save_dataset_number = 0
             self.__menu[self.__select_item].text = "Новые комбинации: " + \
                                                    self.__save_dataset[self.__save_dataset_number][0]
-            self.setup.saveData = self.__save_dataset[self.__save_dataset_number][1]
+            self.setup.save_data = self.__save_dataset[self.__save_dataset_number][1]
 
         # Использование датасета
         elif self.__select_item == 5:
@@ -193,7 +194,7 @@ class GameMenu:
             self.setup.learn_bot = self.__learn_bot[self.__learn_bot_number][1]
 
         # Комбинации с ничьей
-        elif self.__select_item == 6 and self.__learn_bot[self.__learn_bot_number][1]:
+        elif self.__select_item == 6:
             self.__draw_bot_number += 1
             if self.__draw_bot_number >= len(self.__draw_bot):
                 self.__draw_bot_number = 0
