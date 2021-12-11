@@ -66,7 +66,7 @@ class Study:
                     self.dataset.insert(0, self.__current_game)
                     self.__old_count_dataset += 1
 
-        if len(self.saved_dump) > 50 or end:
+        if len(self.saved_dump) >= 50 or end:
             try:
                 f = open(self.file, "w", encoding="UTF-8")
                 for i in range(len(self.dataset)):
