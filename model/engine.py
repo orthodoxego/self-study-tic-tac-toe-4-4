@@ -161,12 +161,6 @@ class TicTacEngine:
                                                                f"Последовательность: {self.study.info_template.chars}",
                                                                self.setup.GRAY))
 
-        if self.setup.config_game == 0:
-            self.__view.draw_texture(scene, self.setup.screen_width // 2.3, self.setup.screen_height - 30,
-                                     self.__text.getSystemText("LEARN",
-                                                               "В setup.py значение self.config_game = 10, чтобы сыграть с ботом",
-                                                               self.setup.GRAY))
-
 
     def draw(self, scene, clock, delta):
 
