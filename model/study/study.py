@@ -137,7 +137,7 @@ class Study:
             self.info_template.chars = f"-"
             self.info_template.template = "Нет шаблона"
 
-        if len(current_string) <= 1 and randint(0, 100) < 90:
+        if len(current_string) <= 1 and randint(0, 100) < 70:
             # xT = 1 + randint(0, self.setup.board_lenght // 4)
             # yT = 1 + randint(0, self.setup.board_lenght // 4)
             xT = self.setup.board_lenght // 2
