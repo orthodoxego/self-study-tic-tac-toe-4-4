@@ -36,7 +36,7 @@ class MergeDataset:
             f.write(source_data[i])
         f.close()
 
-        print(f"Новых записей: {self.new_count}")
+        print(f"Новых записей: {self.new_count} из {len(in_data)}")
 
 
 if __name__ == "__main__":
