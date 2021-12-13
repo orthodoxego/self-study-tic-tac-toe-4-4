@@ -4,6 +4,7 @@ from menu.gamemenu import GameMenu
 from setup import Setup
 from model.engine import TicTacEngine
 from model.services.mainstate import MainState
+from starsbackground.starsengine import StarsEngine
 
 class Game:
     """Класс-шаблон для игр на базе pygame."""
@@ -38,6 +39,9 @@ class Game:
         # Главное меню
         self.__game_menu = GameMenu(pygame, self.setup)
 
+        # Звёзды
+        self.stars_engine = StarsEngine(200, self.WIDTH, self.HEIGHT)
+
     @property
     def WIDTH(self):
         return self.setup.screen_width
@@ -52,6 +56,9 @@ class Game:
 
             # Отрисовка
             self.scene.fill(self.setup.BLACK)
+
+
+            self.stars_engine.draw(pygame, self.scene)
 
             if self.__main_state == MainState.VIEW_MENU:
                 self.__game_menu.draw(pygame, self.scene)
@@ -77,6 +84,8 @@ class Game:
                 res *= self.__tic_tac_toe.act(pygame, self.__delta)
                 if not res:
                     self.__main_state = MainState.VIEW_MENU
+
+            self.stars_engine.act(self.__delta)
 
             # Delta-time для коррекции анимации
             self.__delta = self.clock.tick(self.setup.FPS) / 1000
