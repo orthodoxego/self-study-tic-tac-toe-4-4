@@ -8,9 +8,8 @@ class GameMenu:
 
     def __init__(self, pygame, setup):
         self.setup = setup
-        self.__cursor = Textures().figure[0]
-        self.__correct_cursor_x = self.__cursor.get_width() // 2
-        self.__correct_cursor_y = self.__cursor.get_height() // 2
+        self.__correct_cursor_x = Textures().figure[0].get_width() // 2
+        self.__correct_cursor_y = Textures().figure[0].get_height() // 2
         self.__controller = ControllerGameMenu()
         self.__font = Font()
 
@@ -53,6 +52,9 @@ class GameMenu:
             if setup.FPS == self.__fps[i]:
                 self.__fps_number = i
 
+        self.__skin = ["обычный", "камни"]
+        self.__skin_number = self.setup.skin_number
+
 
         self.__menu = []
         left_border = int(self.setup.screen_width * 0.2)
@@ -62,33 +64,37 @@ class GameMenu:
                                     width_menu, 60))
         self.__menu.append(MenuData("Тип игры: " + self.__type_game[self.__type_game_number][0],
                                     left_border,
-                                    200, width_menu, 60))
+                                    180, width_menu, 60))
         self.__menu.append(MenuData("Размер поля: " + self.__size_game[self.__size_game_number][0],
                                     left_border,
-                                    250, width_menu, 60))
+                                    230, width_menu, 60))
         self.__menu.append(MenuData("Пауза между раундами: " + self.__pause_round_game[self.__pause_round_game_number][0],
                                     left_border,
-                                    300, width_menu, 60))
+                                    280, width_menu, 60))
         self.__menu.append(MenuData("Новые комбинации: " + self.__save_dataset[self.__save_dataset_number][0],
                                     left_border,
-                                    350, width_menu, 60))
+                                    330, width_menu, 60))
 
         self.__menu.append(MenuData("Боты и датасет: " + str(self.__learn_bot[self.__learn_bot_number][0]),
                                     left_border,
-                                    400, width_menu, 60))
+                                    380, width_menu, 60))
 
         self.__menu.append(MenuData("Включать комбинации с \"ничьей\": " + str(self.__draw_bot[self.__draw_bot_number][0]),
                                     left_border,
-                                    450, width_menu, 60))
+                                    430, width_menu, 60))
 
         self.__menu.append(MenuData("Стремиться к FPS: " + str(self.__fps[self.__fps_number]),
                                     left_border,
-                                    500, width_menu, 60))
+                                    480, width_menu, 60))
+
+        self.__menu.append(MenuData("Скин фигур: " + str(self.__skin[self.__skin_number]),
+                                    left_border,
+                                    530, width_menu, 60))
 
 
         self.__menu.append(MenuData("Прекратить вакханалию...",
                                     left_border,
-                                    600,
+                                    610,
                                     width_menu, 60))
 
 
@@ -101,7 +107,8 @@ class GameMenu:
             ret = self.menuReaction()
 
         if ret == 10 or ret == 27:
-            pygame.mouse.set_visible(True)
+            if self.setup.config_game == 0:
+                pygame.mouse.set_visible(True)
             self.setup.saveSettings()
 
         mx = self.__controller.mouse_x
@@ -141,7 +148,7 @@ class GameMenu:
 
 
 
-        scene.blit(self.__cursor, (self.__controller.mouse_x - self.__correct_cursor_x,
+        scene.blit(Textures().figure[0], (self.__controller.mouse_x - self.__correct_cursor_x,
                                    self.__controller.mouse_y - self.__correct_cursor_y))
 
     def menuReaction(self):
@@ -209,3 +216,11 @@ class GameMenu:
                 self.__fps_number = 0
             self.__menu[self.__select_item].text = "Стремиться к FPS: " + str(self.__fps[self.__fps_number])
             self.setup.FPS = self.__fps[self.__fps_number]
+
+        # СКИНЫ
+        elif self.__select_item == 8:
+            self.__skin_number += 1
+            if self.__skin_number >= len(self.__skin):
+                self.__skin_number = 0
+            self.__menu[self.__select_item].text = "Скин фигур: " + str(self.__skin[self.__skin_number])
+            self.setup.skin_number = self.__skin_number

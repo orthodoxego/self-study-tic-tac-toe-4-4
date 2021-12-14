@@ -31,6 +31,12 @@ class TicTacEngine:
         self.__services = Services(self.setup.start_point_x, self.setup.start_point_y)
         self.default_state = GameState.PLAYER
 
+        # Фигура для отрисовки курсора
+        self.__global_figure = 0
+
+        self.__correct_cursor_x = Textures().figure[0].get_width() // 2
+        self.__correct_cursor_y = Textures().figure[0].get_height() // 2
+
         # Класс-обучалка
         self.study = Study(self.__datamodel.field, self.setup)
 
@@ -178,6 +184,14 @@ class TicTacEngine:
 
             # Отрисует игровую модель: поле, фигуры и выделенную плитку
             self.__view.draw_cells_and_figure(scene, self.__datamodel.field, draw_selected_cell_x, draw_selected_cell_y)
+
+        if self.setup.config_game > 0:
+            if self.__game_state == GameState.PLAYER:
+                scene.blit(Textures().figure[self.setup.figure01], (self.__controller.mouse_x - self.__correct_cursor_x,
+                                                self.__controller.mouse_y - self.__correct_cursor_y))
+            else:
+                scene.blit(Textures().figure[self.setup.figure02], (self.__controller.mouse_x - self.__correct_cursor_x,
+                                                  self.__controller.mouse_y - self.__correct_cursor_y))
 
     def playerOneMove(self):
         xy_pressed_cells = self.__services.getCellsCoord(self.__controller.mouse_x, self.__controller.mouse_y,

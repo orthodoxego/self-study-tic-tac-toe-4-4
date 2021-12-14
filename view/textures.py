@@ -21,5 +21,11 @@ class Textures:
         self.cell_win = pygame.image.load('png/cell_win.png')
 
         # Крестик и нолик
-        self.figure = [pygame.image.load('png/cross.png'),
-                       pygame.image.load('png/zero.png')]
+        self.__figure = [
+            [pygame.image.load('png/cross.png'), pygame.image.load('png/zero.png')],
+            [pygame.image.load('png/cross-diamond.png'), pygame.image.load('png/zero-diamond.png')]
+        ]
+
+    @property
+    def figure(self):
+        return self.__figure[self.setup.skin_number]

@@ -60,6 +60,9 @@ class Setup(metaclass=Single):
         # Включать ли последовательности с ничьей
         self.draw_game = False
 
+        # Номер текстуры фигур
+        self.skin_number = 1
+
         # Цвета
         self.BLACK = (0, 0, 0)
         self.GRAY = (120, 120, 120)
@@ -137,6 +140,7 @@ class Setup(metaclass=Single):
             f.write(f"learn_bot={self.learn_bot}\n")
             f.write(f"draw_game={self.draw_game}\n")
             f.write(f"FPS={self.FPS}\n")
+            f.write(f"skin={self.skin_number}\n")
             f.close()
         except:
             return False
@@ -165,6 +169,8 @@ class Setup(metaclass=Single):
                     self.draw_game = True if line[1] == "True" else False
                 elif line[0] == "FPS":
                     self.FPS = int(line[1])
+                elif line[0] == "skin":
+                    self.skin_number = int(line[1])
         except:
             self.saveSettings()
             return False
