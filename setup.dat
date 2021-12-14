@@ -5,3 +5,4 @@ save_data=True
 learn_bot=True
 draw_game=False
 FPS=300
+skin=4
