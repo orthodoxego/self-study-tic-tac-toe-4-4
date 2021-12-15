@@ -1,8 +1,8 @@
-config_game=0
+config_game=1
 board_lenght=5
-pause_round=0.01
+pause_round=0
 save_data=True
 learn_bot=True
-draw_game=False
-FPS=300
-skin=3
+draw_game=True
+FPS=60
+skin=0
