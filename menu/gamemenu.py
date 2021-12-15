@@ -52,7 +52,7 @@ class GameMenu:
             if setup.FPS == self.__fps[i]:
                 self.__fps_number = i
 
-        self.__skin = ["обычный", "камни", "фрукты 8-бит", "смайлы", "плитка"]
+        self.__skin = ["обычный", "геометрия", "камни", "цвета", "фрукты 8-бит", "смайлы", "плитка"]
         self.__skin_number = self.setup.skin_number
 
 

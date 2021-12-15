@@ -23,7 +23,9 @@ class Textures:
         # Крестик и нолик
         self.__figure = [
             [pygame.image.load('png/cross.png'), pygame.image.load('png/zero.png')],
+            [pygame.image.load('png/star01.png'), pygame.image.load('png/star02.png')],
             [pygame.image.load('png/cross-diamond.png'), pygame.image.load('png/zero-diamond.png')],
+            [pygame.image.load('png/colors01.png'), pygame.image.load('png/colors02.png')],
             [pygame.image.load('png/apple8bit.png'), pygame.image.load('png/pear8bit.png')],
             [pygame.image.load('png/smile01.png'), pygame.image.load('png/smile02.png')],
             [pygame.image.load('png/tile01.png'), pygame.image.load('png/tile02.png')]
