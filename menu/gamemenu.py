@@ -46,7 +46,7 @@ class GameMenu:
         self.__save_dataset = [["игнорировать", False], ["записывать в датасет", True]]
         self.__save_dataset_number = self.setup.save_data
 
-        self.__fps = [30, 60, 120, 180, 240, 300]
+        self.__fps = [30, 60, 120, 180, 240, 300, 600]
         self.__fps_number = 0
         for i in range(len(self.__fps)):
             if setup.FPS == self.__fps[i]:

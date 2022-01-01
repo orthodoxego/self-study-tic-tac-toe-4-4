@@ -28,8 +28,8 @@ class Setup(metaclass=Single):
         self.wait_for_move = 0.001
 
         # Ширина и высота окна для оконного режима
-        self._screen_width = 1024
-        self._screen_height = 768
+        self._screen_width = 900
+        self._screen_height = 900
 
         # Номера фигур, 0 - бот, 1 - игрок, 2 - пустая клетка
         self.figure01 = 0
