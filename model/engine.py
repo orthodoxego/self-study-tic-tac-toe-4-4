@@ -30,6 +30,7 @@ class TicTacEngine:
         self.__controller = ControllerGame()
         self.__services = Services(self.setup.start_point_x, self.setup.start_point_y)
         self.default_state = GameState.PLAYER
+        self.max_fps = 0 # Максимальное значение FPS
 
         # Фигура для отрисовки курсора
         self.__global_figure = 0
@@ -126,8 +127,13 @@ class TicTacEngine:
 
     def draw_system_messages(self, scene, clock):
         # ФПС
+        if self.__count_frame % self.setup.FPS * 5 == 0:
+            self.max_fps = 0
+        fps = int(clock.get_fps())
+        if fps > self.max_fps:
+            self.max_fps = fps
         self.__view.draw_texture(scene, 10, 10,
-                                 self.__text.getSystemText("FPS", f"FPS: {int(clock.get_fps())}", self.setup.GREEN))
+                                 self.__text.getSystemText("FPS", f"FPS: {fps} Максимальное: {self.max_fps}", self.setup.GREEN))
         self.__view.draw_texture(scene, 10, 70,
                                  self.__text.getSystemText("COUNT_WIN_1",
                                                            f"{self.__move_function['TYPE'][0]}: {self.__count_win_player_and_bot[0]}",

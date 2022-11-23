@@ -1,6 +1,5 @@
 import pygame
 
-
 class Font:
     """Генерирует поверхности с текстом для вывода на экран."""
     def __init__(self):
